@@ -2,6 +2,7 @@ package com.example.handmadeshop.DTO;
 
 import com.example.handmadeshop.EJB.model.Product;
 import com.example.handmadeshop.EJB.model.User;
+import com.example.handmadeshop.service.KmsEncryptionService;
 
 public class ModeMapper {
 
@@ -48,8 +49,13 @@ public class ModeMapper {
         user.setName(userDTO.getName());
         user.setSurname(userDTO.getSurname());
         user.setEmail(userDTO.getEmail());
-        user.setPassword(userDTO.getPassword()); // Only when creating/updating
         user.setRole(userDTO.getRole());
+
+        if (userDTO.getPassword() != null && !userDTO.getPassword().isEmpty()) {
+            KmsEncryptionService kmsService = new KmsEncryptionService();
+            user.setPassword(kmsService.encrypt(userDTO.getPassword()));
+        }
+
         return user;
     }
 }

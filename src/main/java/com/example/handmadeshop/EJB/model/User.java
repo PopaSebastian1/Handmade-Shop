@@ -10,8 +10,7 @@ import java.util.List;
 @Table(name = "\"User\"")
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "User_id_gen")
-    @SequenceGenerator(name = "User_id_gen", sequenceName = "User_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Integer id;
 
@@ -41,7 +40,7 @@ public class User {
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
-            name = "userproduct",
+            name = "\"UserProduct\"",
             joinColumns = @JoinColumn(name = "userid"),
             inverseJoinColumns = @JoinColumn(name = "productid")
     )
@@ -105,10 +104,10 @@ public class User {
     }
 
     // Helper methods
-//    public void addProduct(Product product) {
-//        this.products.add(product);
-//        product.getUsers().add(this);
-//    }
+    public void addProduct(Product product) {
+        this.products.add(product);
+        product.getUsers().add(this);
+    }
 
     public void removeProduct(Product product) {
         this.products.remove(product);
