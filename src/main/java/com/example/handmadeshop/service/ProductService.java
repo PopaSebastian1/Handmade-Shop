@@ -34,7 +34,6 @@ public class ProductService {
     public ProductDTO updateProduct(Integer id, ProductDTO productDTO) {
         Product existingProduct = productRepository.findById(id);
         if (existingProduct != null) {
-            // Update only the fields that should be updated
             existingProduct.setName(productDTO.getName());
             existingProduct.setPrice(productDTO.getPrice());
             existingProduct.setQuantity(productDTO.getQuantity());
@@ -52,8 +51,8 @@ public class ProductService {
         productRepository.delete(id);
     }
 
-    public void addUserToProduct(Integer productId, Integer userId) {
-        productRepository.addUserToProduct(productId, userId);
+    public void addUserToProduct(Integer productId, Integer userId, Integer quantity) {
+        productRepository.addUserToProduct(productId, userId, quantity);
     }
 
     public List<ProductDTO> searchProducts(String keyword) {

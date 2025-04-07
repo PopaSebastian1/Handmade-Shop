@@ -1,24 +1,19 @@
 package com.example.handmadeshop.DTO;
 
+import java.util.List;
+
 public class UserDTO {
     private Integer id;
     private String name;
     private String surname;
     private String email;
     private String password;
-    private String role;
+    private String clientId;
+    private String clientSecret;
+    private List<String> roles;
 
     // Constructors
     public UserDTO() {}
-
-    public UserDTO(Integer id, String name, String surname, String email, String password, String role) {
-        this.id = id;
-        this.name = name;
-        this.surname = surname;
-        this.email = email;
-        this.password = password;
-        this.role = role;
-    }
 
     // Getters and Setters
     public Integer getId() {
@@ -61,11 +56,27 @@ public class UserDTO {
         this.password = password;
     }
 
-    public String getRole() {
-        return role;
+    public String getClientId() {
+        return clientId;
     }
 
-    public void setRole(String role) {
-        this.role = role;
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
+    }
+
+    public String getClientSecret() {
+        return clientSecret;
+    }
+
+    public void setClientSecret(String clientSecret) {
+        this.clientSecret = clientSecret;
+    }
+
+    public List<String> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(List<String> roles) {
+        this.roles = roles;
     }
 }

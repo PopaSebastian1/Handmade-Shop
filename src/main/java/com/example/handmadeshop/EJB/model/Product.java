@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import org.hibernate.annotations.Type;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,8 +13,7 @@ import java.util.List;
 @Table(name = "\"Product\"")
 public class Product {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "Product_id_gen")
-    @SequenceGenerator(name = "Product_id_gen", sequenceName = "Product_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Integer id;
 
@@ -41,10 +41,9 @@ public class Product {
     @Column(name = "image")
     private String image;
 
-    @ManyToMany(mappedBy = "products", fetch = FetchType.EAGER)
-    private List<User> users = new ArrayList<>();
+    @OneToMany(mappedBy = "productid", cascade = CascadeType.ALL)
+    private List<UserProduct> userProducts = new ArrayList<>();
 
-    // Getters and Setters
     public Integer getId() {
         return id;
     }
@@ -100,23 +99,16 @@ public class Product {
     public void setImage(String image) {
         this.image = image;
     }
-
-    public List<User> getUsers() {
-        return users;
-    }
-
-    public void setUsers(List<User> users) {
-        this.users = users;
-    }
-
-    // Helper methods
-    public void addUser(User user) {
-        this.users.add(user);
-        user.getProducts().add(this);
-    }
-
-    public void removeUser(User user) {
-        this.users.remove(user);
-        user.getProducts().remove(this);
+    // Helper method
+    public void addUser(User user, int quantity) {
+        UserProduct userProduct = new UserProduct();
+        UserProductId id = new UserProductId();
+        id.setProductid(this.id);
+        id.setUserid(user.getId());
+        userProduct.setId(id);
+        userProduct.setProductid(this);
+        userProduct.setUserid(user);
+        userProduct.setQuantity(quantity);
+        this.userProducts.add(userProduct);
     }
 }

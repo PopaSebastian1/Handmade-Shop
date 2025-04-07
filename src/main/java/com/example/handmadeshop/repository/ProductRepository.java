@@ -2,9 +2,7 @@ package com.example.handmadeshop.repository;
 
 import com.example.handmadeshop.DTO.ModeMapper;
 import com.example.handmadeshop.DTO.ProductDTO;
-import com.example.handmadeshop.EJB.model.Product;
-import com.example.handmadeshop.EJB.model.User;
-
+import com.example.handmadeshop.EJB.model.*;
 import jakarta.ejb.Stateless;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -46,20 +44,25 @@ public class ProductRepository {
     public void delete(Integer id) {
         Product product = findById(id);
         if (product != null) {
-            // Remove associations first
-            product.getUsers().forEach(user -> user.getProducts().remove(product));
             em.remove(product);
         }
     }
 
-    public void addUserToProduct(Integer productId, Integer userId) {
+    public void addUserToProduct(Integer productId, Integer userId, Integer quantity) {
         Product product = findById(productId);
-        if (product != null) {
-            User user = em.find(User.class, userId);
-            if (user != null) {
-                product.addUser(user);
-                em.merge(product);
-            }
+        User user = em.find(User.class, userId);
+
+        if (product != null && user != null) {
+            UserProduct userProduct = new UserProduct();
+            UserProductId id = new UserProductId();
+            id.setProductid(productId);
+            id.setUserid(userId);
+            userProduct.setId(id);
+            userProduct.setProductid(product);
+            userProduct.setUserid(user);
+            userProduct.setQuantity(quantity);
+
+            em.persist(userProduct);
         }
     }
 }

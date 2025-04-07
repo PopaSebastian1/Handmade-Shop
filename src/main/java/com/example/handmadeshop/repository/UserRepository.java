@@ -1,14 +1,10 @@
 package com.example.handmadeshop.repository;
 
-import com.example.handmadeshop.DTO.ModeMapper;
-import com.example.handmadeshop.DTO.UserDTO;
-import com.example.handmadeshop.EJB.model.Product;
-import com.example.handmadeshop.EJB.model.User;
+import com.example.handmadeshop.EJB.model.*;
 import jakarta.ejb.Stateless;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Stateless
 public class UserRepository {
@@ -23,19 +19,16 @@ public class UserRepository {
         return em.find(User.class, id);
     }
 
-    public UserDTO findDTOById(Integer id) {
-        User user = findById(id);
-        return user != null ? ModeMapper.toUserDTO(user) : null;
+    public User findByEmail(String email) {
+        return em.createQuery("SELECT u FROM User u WHERE u.email = :email", User.class)
+                .setParameter("email", email)
+                .getResultStream()
+                .findFirst()
+                .orElse(null);
     }
 
     public List<User> findAll() {
         return em.createQuery("SELECT u FROM User u", User.class).getResultList();
-    }
-
-    public List<UserDTO> findAllDTOs() {
-        return findAll().stream()
-                .map(ModeMapper::toUserDTO)
-                .collect(Collectors.toList());
     }
 
     public User update(User user) {
@@ -45,20 +38,18 @@ public class UserRepository {
     public void delete(Integer id) {
         User user = findById(id);
         if (user != null) {
-            // Remove associations first
-            user.getProducts().forEach(product -> product.getUsers().remove(user));
             em.remove(user);
         }
     }
 
-    public void addProductToUser(Integer userId, Integer productId) {
-        User user = findById(userId);
-        if (user != null) {
-            Product product = em.find(Product.class, productId);
-            if (product != null) {
-                user.addProduct(product);
-                em.merge(user);
-            }
-        }
+    public void addRoleToUser(Integer userId, Integer roleId) {
+        UserRole userRole = new UserRole();
+        UserRoleId id = new UserRoleId();
+        id.setUserid(userId);
+        id.setRoleid(roleId);
+        userRole.setId(id);
+        userRole.setUserid(findById(userId));
+        userRole.setRoleid(em.find(Role.class, roleId));
+        em.persist(userRole);
     }
 }

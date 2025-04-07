@@ -110,10 +110,11 @@ public class ProductController {
     @Path("/{productId}/users/{userId}")
     public Response addUserToProduct(
             @PathParam("productId") int productId,
-            @PathParam("userId") int userId) {
-        logger.info("Adding user " + userId + " to product " + productId);
+            @PathParam("userId") int userId,
+            @QueryParam("quantity") @DefaultValue("1") int quantity) {
+        logger.info("Adding user " + userId + " to product " + productId + " with quantity " + quantity);
         try {
-            productService.addUserToProduct(productId, userId);
+            productService.addUserToProduct(productId, userId, quantity);
             return Response.ok().build();
         } catch (Exception e) {
             logger.severe("Error adding user to product: " + e.getMessage());
