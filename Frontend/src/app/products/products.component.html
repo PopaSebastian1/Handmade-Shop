@@ -1,0 +1,46 @@
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<button class="fixed-plus" (click)="addNewItem()">+</button>
+<table class="container">
+    <tr *ngFor="let product of products" class="card">
+        <td>
+            <div class="card-content">
+                <img [src]="product.imagePath" (click)="viewProductDetails(product.imagePath)" alt="{{ product.name }}">
+                <h4 class="name">{{ product.productName }}</h4>
+                <p class="name">Price: ${{ product.price }}</p>
+            </div>
+            <button class="button"
+                (click)="addItemToCart(product.name, product.price, product.description, product.imagePath)">Add to
+                cart</button>
+        </td>
+    </tr>
+</table>
+
+<div *ngIf="showPopup" class="popup-container">
+    <div class="popup">
+        <div class="popup-content">
+            <h3>Adaugă Produs</h3>
+            <form (submit)="addProduct($event)">
+                <div class="form-group">
+                    <label for="productLink">Link</label>
+                    <input id="productLink" type="url" placeholder="Introdu link-ul" required />
+                </div>
+                <div class="form-group">
+                    <label for="productName">Nume</label>
+                    <input id="productName" type="text" placeholder="Introdu numele" required />
+                </div>
+                <div class="form-group">
+                    <label for="productDescription">Descriere</label>
+                    <textarea id="productDescription" rows="3" placeholder="Introdu descrierea" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="productPrice">Preț ($)</label>
+                    <input id="productPrice" type="number" step="0.01" placeholder="Introdu prețul" required />
+                </div>
+                <div class="form-buttons">
+                    <button type="submit" class="btn btn-primary">Adaugă</button>
+                    <button type="button" class="btn btn-secondary" (click)="togglePopup()">Anulează</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

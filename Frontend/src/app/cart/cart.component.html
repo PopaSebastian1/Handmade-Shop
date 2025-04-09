@@ -1,0 +1,28 @@
+<div class="cart" *ngIf="cart.length > 0; else emptyCart">
+  <div *ngFor="let item of cart" class="cart-item">
+    <div class="item-image">
+      <img [src]="item.imagePath" alt="{{ item.name }}">
+    </div>
+    <div class="item-details">
+      <h2>{{ item.name }}</h2>
+      <p>Price: {{ item.price }} $</p>
+      <p>Count: {{ item.count }} buc</p>
+      <p>Total: {{ item.price * item.count | number:'1.2-2'}} $</p>
+      <button (click)="increaseCount(item)">Increase</button>
+      <button (click)="decreaseCount(item)">Decrease</button>
+      <button (click)="removeItemFromCart(item.imagePath)">Remove from Cart</button>
+    </div>
+  </div>
+  <p>Total Count: {{ totalCount() }} buc</p>
+  <p>Total Price: {{ totalCart() | number:'1.2-2' }} $</p>
+  <button (click)="clearCart()">Clear Cart</button>
+  <button (click)="navigateToPay()">Proceed to Payment</button>
+</div>
+
+<ng-template #emptyCart>
+  <div class="empty-cart">
+    <img class="full-page-image" src="https://cdn3.iconfinder.com/data/icons/shopping-and-ecommerce-29/90/empty_cart-512.png">
+    <h1>Your cart is empty</h1>
+    <button class="empty-button" (click)="navigateToProducts()">Go to Products</button>
+  </div>
+</ng-template>
