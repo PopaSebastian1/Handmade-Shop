@@ -1,5 +1,6 @@
 package com.example.handmadeshop.service;
 
+import com.example.handmadeshop.DTO.ModeMapper;
 import com.example.handmadeshop.DTO.UserDTO;
 import com.example.handmadeshop.EJB.model.*;
 import com.example.handmadeshop.repository.RoleRepository;
@@ -17,14 +18,7 @@ public class UserService {
     private RoleRepository roleRepository;
 
     public UserDTO createUser(UserDTO userDTO) {
-        User user = new User();
-        user.setId(userDTO.getId());
-        user.setName(userDTO.getName());
-        user.setSurname(userDTO.getSurname());
-        user.setEmail(userDTO.getEmail());
-        user.setPassword(userDTO.getPassword());
-        user.setClientid(userDTO.getClientId());
-        user.setClientsecret(userDTO.getClientSecret());
+        User user = ModeMapper.toUser(userDTO);
 
         userRepository.create(user);
 
@@ -38,7 +32,7 @@ public class UserService {
             }
         }
 
-        return toDTO(user);
+        return ModeMapper.toUserDTO(user);
     }
 
     public UserDTO toDTO(User user) {

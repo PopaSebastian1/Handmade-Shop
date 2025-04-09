@@ -1,6 +1,10 @@
 package com.example.handmadeshop.controllers;
 
+import com.example.handmadeshop.DTO.ModeMapper;
 import com.example.handmadeshop.DTO.UserDTO;
+import com.example.handmadeshop.EJB.model.User;
+import com.example.handmadeshop.repository.UserRepository;
+import com.example.handmadeshop.service.KmsEncryptionService;
 import com.example.handmadeshop.service.UserService;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
@@ -13,6 +17,8 @@ import jakarta.ws.rs.core.Response;
 public class UserController {
     @Inject
     private UserService userService;
+    @Inject
+    private UserRepository userRepository;
 
     @POST
     public Response createUser(UserDTO userDTO) {
@@ -50,5 +56,32 @@ public class UserController {
     public Response deleteUser(@PathParam("id") Integer id) {
         userService.deleteUser(id);
         return Response.noContent().build();
+    }
+
+    @POST
+    @Path("/login")
+    public Response login(@QueryParam("email") String email,
+                          @QueryParam("password") String password) {
+        KmsEncryptionService kmsService = new KmsEncryptionService();
+
+        if (email == null || password == null) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity("{\"error\":\"Email and password are required\"}")
+                    .build();
+        }
+
+        var encryptedEmail = kmsService.encrypt(email);
+        User user = userRepository.findByEmail(encryptedEmail);
+
+        if (user != null && user.getPassword().equals(kmsService.encrypt((password)))) {
+            UserDTO userDTO = ModeMapper.toUserDTO(user);
+            userDTO.setPassword(null);
+            return Response.ok(userDTO).build();
+        }
+
+        return Response.status(Response.Status.UNAUTHORIZED)
+                .entity("{\"error\":\"Invalid email or password\"}")
+                .type(MediaType.APPLICATION_JSON)
+                .build();
     }
 }
