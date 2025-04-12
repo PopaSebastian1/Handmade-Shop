@@ -11,7 +11,6 @@ import java.util.stream.Collectors;
 
 public class ModeMapper {
 
-    // User conversions
     public static UserDTO toUserDTO(User user) {
         KmsEncryptionService kmsService = new KmsEncryptionService();
         UserDTO dto = new UserDTO();
@@ -26,8 +25,7 @@ public class ModeMapper {
         if (user.getEmail() != null)
             dto.setEmail(kmsService.decrypt(user.getEmail()));
 
-        // Mapare roluri cu verificări complete
-        List<String> roles = Optional.ofNullable(user.getUserRoles()) // Verifică lista null
+        List<String> roles = Optional.ofNullable(user.getUserRoles())
                 .orElse(Collections.emptyList())
                 .stream()
                 .map(userRole -> {

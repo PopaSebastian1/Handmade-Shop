@@ -11,6 +11,8 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
+import java.util.List;
+
 @Path("/users")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -70,16 +72,24 @@ public class UserController {
                     .build();
         }
 
-        var encryptedEmail = kmsService.encrypt(email);
-        User user = userRepository.findByEmail(encryptedEmail);
+        List<User> allUsers = userRepository.findAll();
+        User matchedUser = null;
 
-        if (user != null && user.getPassword().equals(kmsService.encrypt((password)))) {
-            UserDTO userDTO = ModeMapper.toUserDTO(user);
+        for (User user : allUsers) {
+            String decryptedEmail = kmsService.decrypt(user.getEmail());
+            if (decryptedEmail.equals(email)) {
+                matchedUser = user;
+                break;
+            }
+        }
+
+        if (matchedUser != null && kmsService.decrypt(matchedUser.getPassword()).equals(password)) {
+            UserDTO userDTO = ModeMapper.toUserDTO(matchedUser);
             userDTO.setPassword(null);
             return Response.ok(userDTO).build();
         }
 
-        return Response.status(Response.Status.UNAUTHORIZED)
+        return Response.status(Response.Status.NOT_FOUND)
                 .entity("{\"error\":\"Invalid email or password\"}")
                 .type(MediaType.APPLICATION_JSON)
                 .build();

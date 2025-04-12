@@ -5,17 +5,16 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.kms.KmsClient;
 import software.amazon.awssdk.services.kms.model.*;
 
-import java.nio.ByteBuffer;
 import java.util.Base64;
 
 public class KmsEncryptionService {
 
-    private final String keyId = "arn:aws:kms:us-east-1:816130369761:key/05c6999d-2582-4957-a9aa-98c42b0465bd"; // înlocuiește cu cheia ta!
+    private final String keyId = "arn:aws:kms:us-east-1:816130369761:key/05c6999d-2582-4957-a9aa-98c42b0465bd";
     private final KmsClient kmsClient;
 
     public KmsEncryptionService() {
         this.kmsClient = KmsClient.builder()
-                .region(Region.US_EAST_1) // adaptează dacă e altă regiune
+                .region(Region.US_EAST_1)
                 .build();
     }
 

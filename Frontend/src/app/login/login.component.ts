@@ -64,7 +64,7 @@ export class LoginComponent {
             }
           },
           error: (error) => {
-            console.error('Unexpected error:', error);
+              this.togglePopup(); 
           }
         });
       }
