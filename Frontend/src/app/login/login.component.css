@@ -347,3 +347,71 @@ body {
 .popup-content .btn-secondary:hover {
   background-color: rgb(156, 49, 147);
 }
+/* Adaugă aceste stiluri sau asigură-te că există în fișierul CSS */
+
+.google-login-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+  width: 100%;
+}
+
+.separator {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  margin: 15px 0;
+}
+
+.line {
+  flex: 1;
+  height: 1px;
+  background-color: #ccc;
+}
+
+.or-text {
+  padding: 0 10px;
+  color: #666;
+  font-size: 14px;
+}
+
+#google-btn-container {
+  min-height: 40px;
+  min-width: 240px;
+  margin-top: 15px;
+}
+
+.google-fallback-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 16px;
+  margin-top: 15px;
+  background-color: white;
+  border: 1px solid #dadce0;
+  border-radius: 4px;
+  font-family: 'Roboto', sans-serif;
+  font-size: 14px;
+  color: #3c4043;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  min-width: 240px;
+}
+
+.google-fallback-btn:hover {
+  background-color: #f7f7f7;
+}
+
+.google-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  margin-right: 8px;
+  font-weight: bold;
+  color: #4285F4;
+  background: white;
+  border-radius: 50%;
+}

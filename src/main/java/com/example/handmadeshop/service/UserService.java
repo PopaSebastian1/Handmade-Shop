@@ -58,6 +58,24 @@ public class UserService {
         User user = userRepository.findById(id);
         return user != null ? toDTO(user) : null;
     }
+    public UserDTO findByEmail(String email) {
+        KmsEncryptionService kmsEncryptionService = new KmsEncryptionService();
+        List<User> allUsers = userRepository.findAll();
+        User matchedUser = null;
+
+        for (User user : allUsers) {
+            String decryptedEmail = kmsEncryptionService.decrypt(user.getEmail());
+            if (decryptedEmail.equals(email)) {
+                matchedUser = user;
+                break;
+            }
+        }
+        if (matchedUser != null) {
+            return ModeMapper.toUserDTO(matchedUser);
+        } else {
+            return null;
+        }
+    }
 
     public List<UserDTO> getAllUsers() {
         return userRepository.findAll().stream()
@@ -87,4 +105,5 @@ public class UserService {
     public void deleteUser(Integer id) {
         userRepository.delete(id);
     }
+
 }

@@ -59,6 +59,7 @@ public class ModeMapper {
         if (userDTO.getPassword() != null && !userDTO.getPassword().isEmpty()) {
             user.setPassword(kmsService.encrypt(userDTO.getPassword()));
         }
+        user.setClientid(userDTO.getClientId());
 
         return user;
     }

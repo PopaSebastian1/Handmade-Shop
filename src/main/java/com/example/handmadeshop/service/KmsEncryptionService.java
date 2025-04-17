@@ -9,7 +9,7 @@ import java.util.Base64;
 
 public class KmsEncryptionService {
 
-    private final String keyId = "arn:aws:kms:us-east-1:816130369761:key/05c6999d-2582-4957-a9aa-98c42b0465bd";
+    private final String keyId = "arn:aws:kms:us-east-1:067784255460:key/90ae80ba-4646-4893-a13a-f4f95a80643f";
     private final KmsClient kmsClient;
 
     public KmsEncryptionService() {

@@ -1,20 +1,24 @@
-import { Component } from '@angular/core';
+// login.component.ts
+import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormBuilder, Validators } from '@angular/forms';
 import { DataService } from '../data.service';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { User } from '../../models/user.model';
+import { GoogleAuthService } from '../../app/services/google-auth/google-auth.service';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit, AfterViewInit {
+  baseURLGoogle: string = 'http://localhost:8080/Handmade-Shopping-1.0-SNAPSHOT/api/auth';
   baseURL: string = 'http://localhost:8080/Handmade-Shopping-1.0-SNAPSHOT/api/users';
   showPopup = false;
+  googleButtonRendered = false;
 
-  togglePopup() {
+  togglePopup(): void {
     this.showPopup = !this.showPopup;
   }
 
@@ -34,8 +38,42 @@ export class LoginComponent {
     private authService: DataService,
     private router: Router,
     private http: HttpClient,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private googleAuthService: GoogleAuthService // Injectăm noul serviciu
   ) { }
+
+  ngOnInit(): void {}
+
+  ngAfterViewInit(): void {
+    this.googleAuthService.loadGoogleScript().subscribe(success => {
+      if (success) {
+        this.initializeGoogleButtons();
+      } else {
+        console.error('Failed to load Google API script');
+        this.googleButtonRendered = false;
+      }
+    });
+  }
+
+  initializeGoogleButtons(): void {
+    const loginContainer = document.getElementById('google-login-btn-container');
+    const loginSuccess = this.googleAuthService.initializeLoginButton(loginContainer);
+    
+    const signupContainer = document.getElementById('google-signup-btn-container');
+    const signupSuccess = this.googleAuthService.initializeSignupButton(signupContainer);
+    
+    this.googleButtonRendered = loginSuccess && signupSuccess;
+    console.log('Google buttons initialized:', this.googleButtonRendered);
+  }
+
+  manualGoogleLogin(): void {
+    const loginForm = document.querySelector('.login-form');
+    if (loginForm && window.getComputedStyle(loginForm).display !== 'none') {
+      this.googleAuthService.promptGoogleLogin();
+    } else {
+      this.googleAuthService.promptGoogleSignup();
+    }
+  }
 
   loginUser(email: string, password: string) {
     const params = new HttpParams()
@@ -47,7 +85,7 @@ export class LoginComponent {
       responseType: 'text' 
     });
   }
-  
+
   onLogin(event: Event): void {
     event.preventDefault();
     if (this.loginForm.valid) {
@@ -55,21 +93,26 @@ export class LoginComponent {
       const password = this.loginForm.value.password;
       if (email && password) {
         this.loginUser(email, password).subscribe({
-          next: (response: string) => {
+          next: (response: any): void => {
+            console.log('Login response:', response);
+            // Verifică dacă răspunsul indică o eroare cunoscută
             if (response === 'Invalid email or password') {
               this.togglePopup(); 
             } else {
+              // Pentru orice alt răspuns, considerăm login-ul reușit
               this.authService.setUser(email);
               this.router.navigate(['/home']);
             }
           },
-          error: (error) => {
-              this.togglePopup(); 
+          error: (error: unknown): void => {
+            console.error('Login error:', error);
+            this.togglePopup();
           }
         });
       }
     }
   }
+  
 
   signupUser(user: User) {
     const headers = new HttpHeaders({
@@ -84,26 +127,28 @@ export class LoginComponent {
 
   onSignup(event: Event): void {
     event.preventDefault();
-
+  
     if (this.signupForm.valid) {
       const name = this.signupForm.value.name!;
       const surname = this.signupForm.value.surename!;
       const email = this.signupForm.value.email!;
       const password = this.signupForm.value.password!;
       const roles = ["viewer"];
-
+  
       const newUser = new User(name, surname, email, password, roles);
-
+  
       this.signupUser(newUser).subscribe({
-        next: (response) => {
-          console.log('Response:', response);
-          if (response === 'User created') {
-            this.authService.setUser(email);
-            this.router.navigate(['/home']);
-          }
+        next: (response: any): void => {
+          console.log('Signup response:', response);
+          // Orice răspuns de succes ar trebui să ne ducă la pagina home
+          // Nu mai verificăm doar 'User created', ci acceptăm orice răspuns pozitiv
+          this.authService.setUser(email);
+          this.router.navigate(['/home']);
         },
-        error: (error) => {
-          console.error('Error:', error);
+        error: (error: unknown): void => {
+          console.error('Signup error:', error);
+          // Aici ai putea adăuga un popup de eroare
+          this.togglePopup();
         }
       });
     }
