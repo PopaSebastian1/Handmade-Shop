@@ -37,6 +37,18 @@
               </div>
               <div class="text sign-up-text">Don't have an account? <label for="flip">Signup now</label></div>
             </div>
+            <div class="google-login-container">
+              <div class="separator">
+                <div class="line"></div>
+                <div class="or-text">OR</div>
+                <div class="line"></div>
+              </div>
+              <div id="google-login-btn-container"></div>
+              <button *ngIf="!googleButtonRendered" class="google-fallback-btn" (click)="manualGoogleLogin()">
+                <span class="google-icon">G</span>
+                Sign in with Google
+              </button>
+            </div>
           </form>
         </div>
         <div class="signup-form">
@@ -63,6 +75,18 @@
                 <input type="submit" value="Signup">
               </div>
               <div class="text sign-up-text">Already have an account? <label for="flip">Login now</label></div>
+            </div>
+            <div class="google-login-container">
+              <div class="separator">
+                <div class="line"></div>
+                <div class="or-text">OR</div>
+                <div class="line"></div>
+              </div>
+              <div id="google-signup-btn-container"></div>
+              <button *ngIf="!googleButtonRendered" class="google-fallback-btn" (click)="manualGoogleLogin()">
+                <span class="google-icon">G</span>
+                Sign up with Google
+              </button>
             </div>
           </form>
         </div>

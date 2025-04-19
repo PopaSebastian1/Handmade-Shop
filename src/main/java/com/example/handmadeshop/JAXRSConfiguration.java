@@ -1,5 +1,6 @@
 package com.example.handmadeshop;
 
+import com.example.handmadeshop.controllers.GoogleAuthController;
 import com.example.handmadeshop.controllers.UserController;
 import jakarta.ws.rs.ApplicationPath;
 import jakarta.ws.rs.core.Application;
@@ -11,7 +12,8 @@ public class JAXRSConfiguration extends Application {
     public Set<Class<?>> getClasses() {
         return Set.of(
                 UserController.class,
-                CorsFilter.class
+                CorsFilter.class,
+                GoogleAuthController.class
         );
     }
 }
