@@ -9,6 +9,7 @@ import { Router } from '@angular/router';
 })
 export class MenuComponent implements OnInit {
   nume: string = '';
+  showPopup = false;
 
   constructor(private router: Router, private dataService: DataService) {
     this.nume = ''; 
@@ -20,5 +21,13 @@ export class MenuComponent implements OnInit {
 
   navigateToLogin() {
     this.router.navigate(['/login']);
+  }
+
+  settings() {
+    this.togglePopup();
+  }
+
+  togglePopup() {
+    this.showPopup = !this.showPopup;
   }
 }

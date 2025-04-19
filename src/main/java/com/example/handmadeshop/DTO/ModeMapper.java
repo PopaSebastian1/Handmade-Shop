@@ -12,18 +12,11 @@ import java.util.stream.Collectors;
 public class ModeMapper {
 
     public static UserDTO toUserDTO(User user) {
-        KmsEncryptionService kmsService = new KmsEncryptionService();
         UserDTO dto = new UserDTO();
         dto.setId(user.getId());
-
-        if (user.getName() != null)
-            dto.setName(kmsService.decrypt(user.getName()));
-
-        if (user.getSurname() != null)
-            dto.setSurname(kmsService.decrypt(user.getSurname()));
-
-        if (user.getEmail() != null)
-            dto.setEmail(kmsService.decrypt(user.getEmail()));
+        dto.setName(user.getName());
+        dto.setSurname(user.getSurname());
+        dto.setEmail(user.getEmail());
 
         List<String> roles = Optional.ofNullable(user.getUserRoles())
                 .orElse(Collections.emptyList())
@@ -43,22 +36,12 @@ public class ModeMapper {
     }
 
     public static User toUser(UserDTO userDTO) {
-        KmsEncryptionService kmsService = new KmsEncryptionService();
         User user = new User();
         user.setId(userDTO.getId());
-
-        if (userDTO.getName() != null)
-            user.setName(kmsService.encrypt(userDTO.getName()));
-
-        if (userDTO.getSurname() != null)
-            user.setSurname(kmsService.encrypt(userDTO.getSurname()));
-
-        if (userDTO.getEmail() != null)
-            user.setEmail(kmsService.encrypt(userDTO.getEmail()));
-
-        if (userDTO.getPassword() != null && !userDTO.getPassword().isEmpty()) {
-            user.setPassword(kmsService.encrypt(userDTO.getPassword()));
-        }
+        user.setName(userDTO.getName());
+        user.setSurname(userDTO.getSurname());
+        user.setEmail(userDTO.getEmail());
+        user.setPassword(userDTO.getPassword());
 
         return user;
     }
@@ -89,18 +72,12 @@ public class ModeMapper {
 
     // Product conversions
     public static ProductDTO toProductDTO(Product product) {
-        KmsEncryptionService kmsService = new KmsEncryptionService();
         ProductDTO dto = new ProductDTO();
         dto.setId(product.getId());
-
-        if (product.getName() != null)
-            dto.setName(kmsService.decrypt(product.getName()));
-
+        dto.setName(product.getName());
         dto.setPrice(product.getPrice());
         dto.setQuantity(product.getQuantity());
-
-        if (product.getDescription() != null)
-            dto.setDescription(kmsService.decrypt(product.getDescription()));
+        dto.setDescription(product.getDescription());
 
         dto.setRating(product.getRating());
         dto.setImage(product.getImage()); // imaginea presupunem că nu e criptată
@@ -109,19 +86,12 @@ public class ModeMapper {
     }
 
     public static Product toProduct(ProductDTO productDTO) {
-        KmsEncryptionService kmsService = new KmsEncryptionService();
         Product product = new Product();
         product.setId(productDTO.getId());
-
-        if (productDTO.getName() != null)
-            product.setName(kmsService.encrypt(productDTO.getName()));
-
+        product.setName(productDTO.getName());
         product.setPrice(productDTO.getPrice());
         product.setQuantity(productDTO.getQuantity());
-
-        if (productDTO.getDescription() != null)
-            product.setDescription(kmsService.encrypt(productDTO.getDescription()));
-
+        product.setDescription(productDTO.getDescription());
         product.setRating(productDTO.getRating());
         product.setImage(productDTO.getImage());
 

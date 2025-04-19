@@ -64,7 +64,6 @@ public class UserController {
     @Path("/login")
     public Response login(@QueryParam("email") String email,
                           @QueryParam("password") String password) {
-        KmsEncryptionService kmsService = new KmsEncryptionService();
 
         if (email == null || password == null) {
             return Response.status(Response.Status.BAD_REQUEST)
@@ -76,14 +75,13 @@ public class UserController {
         User matchedUser = null;
 
         for (User user : allUsers) {
-            String decryptedEmail = kmsService.decrypt(user.getEmail());
-            if (decryptedEmail.equals(email)) {
+            if (email.equals(email)) {
                 matchedUser = user;
                 break;
             }
         }
 
-        if (matchedUser != null && kmsService.decrypt(matchedUser.getPassword()).equals(password)) {
+        if (matchedUser != null && matchedUser.getPassword().equals(password)) {
             UserDTO userDTO = ModeMapper.toUserDTO(matchedUser);
             userDTO.setPassword(null);
             return Response.ok(userDTO).build();

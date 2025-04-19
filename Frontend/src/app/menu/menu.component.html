@@ -6,5 +6,82 @@
         <a class="menu-item" routerLink="/cart">Cart</a>
         <a class="menu-item" routerLink="/about">About</a>
     </nav>
-    <img class="menu-logo right" src="assets/logOut.png" alt="Logo" (click)="navigateToLogin()">
+    <div class="right-section">
+        <img class="role" src="assets/role.png" alt="Role" (click)="settings()">
+        <img class="menu-logo right" src="assets/logOut.png" alt="Logout" (click)="navigateToLogin()">
+    </div>
+    <div *ngIf="showPopup" class="popup-container">
+        <div class="popup">
+            <div class="popup-content">
+                <div class="profile-container">
+                    <h1>Edit Profile</h1>
+
+                    <form>
+                        <div class="form-columns">
+                            <div class="form-column">
+                                <div class="form-group">
+                                    <label for="username">Username</label>
+                                    <input type="text" id="username" name="username" value="current_username">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="surname">Surname</label>
+                                    <input type="text" id="surname" name="surname" value="Current Surname">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="email">Email</label>
+                                    <input type="email" id="email" name="email" value="current@example.com">
+                                </div>
+                            </div>
+
+                            <div class="form-column">
+                                <div class="form-group">
+                                    <label for="password">New Password</label>
+                                    <input type="password" id="password" name="password"
+                                        placeholder="Enter new password">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="confirm-password">Confirm Password</label>
+                                    <input type="password" id="confirm-password" name="confirm-password"
+                                        placeholder="Confirm new password">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="roles-section">
+                            <h3 class="roles-title">Roles</h3>
+                            <div class="roles-grid">
+                                <div class="role-option">
+                                    <input type="checkbox" id="role-admin" name="roles" value="admin" checked>
+                                    <label for="role-admin">Administrator</label>
+                                </div>
+
+                                <div class="role-option">
+                                    <input type="checkbox" id="role-editor" name="roles" value="editor">
+                                    <label for="role-editor">Editor</label>
+                                </div>
+
+                                <div class="role-option">
+                                    <input type="checkbox" id="role-viewer" name="roles" value="viewer" checked>
+                                    <label for="role-viewer">Viewer</label>
+                                </div>
+
+                                <div class="role-option">
+                                    <input type="checkbox" id="role-moderator" name="roles" value="moderator">
+                                    <label for="role-moderator">Moderator</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="buttons">
+                            <button class="btn btn-secondary" (click)="togglePopup()">Close</button>
+                            <button type="submit" class="btn btn-save">Save Changes</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
