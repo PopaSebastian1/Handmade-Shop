@@ -83,6 +83,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
   
     this.userService.loginUser(email!, password!).subscribe({
       next: (user: User) => {
+        console.log('User roles after login:', user.roles); // Debugging
         this.userService.setUserData(user); // salvează tot userul
         this.router.navigate(['/home']);
       },

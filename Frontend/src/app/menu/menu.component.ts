@@ -14,7 +14,7 @@ export class MenuComponent implements OnInit {
   nume: string = '';
   user: User = User.createDefault();
   showPopup = false;
-  allRoles: Role[] = []; 
+  allRoles: Role[] = [];
   confirmPassword: string = '';
 
   constructor(private router: Router, private userService: UserService, private roleService: RoleService) {
@@ -26,7 +26,7 @@ export class MenuComponent implements OnInit {
     });
 
     this.roleService.getAllRoles().subscribe(roles => {
-      this.allRoles = roles; 
+      this.allRoles = roles;
     });
   }
 
@@ -35,7 +35,7 @@ export class MenuComponent implements OnInit {
   }
 
   navigateToLogin() {
-    this.userService.logoutUser(); 
+    this.userService.logoutUser();
     this.router.navigate(['/login']);
   }
 
@@ -64,11 +64,27 @@ export class MenuComponent implements OnInit {
       alert('Passwords do not match!');
       return;
     }
-  
+
+    // Ensure viewer role is always present
+    this.user.roles = [...new Set(this.user.roles)];
+    if (!this.user.roles.includes('viewer')) {
+      this.user.roles.push('viewer');
+    }
+
+    // First update user details if needed
     this.userService.updateUser(this.user).subscribe({
       next: () => {
-        this.userService.setUserData(this.user);
-        this.togglePopup();
+        // Then update roles separately
+        this.userService.updateUserRoles(this.user.id!, this.user.roles).subscribe({
+          next: () => {
+            this.userService.setUserData(this.user);
+            this.togglePopup();
+          },
+          error: (error) => {
+            console.error('Error updating roles:', error);
+            alert('Failed to save role changes.');
+          }
+        });
       },
       error: (error) => {
         console.error('Error updating user:', error);
@@ -76,5 +92,5 @@ export class MenuComponent implements OnInit {
       }
     });
   }
-  
+
 }

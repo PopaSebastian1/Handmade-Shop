@@ -36,7 +36,7 @@ export class UserService {
     this.user.next(''); // Resetează numele utilizatorului
     this.loggedIn.next(false); // Setează utilizatorul ca delogat
   }
-  
+
   setUser(name: string) {
     this.user.next(name);
     this.nameCurrentUser = name;
@@ -49,16 +49,16 @@ export class UserService {
 
   setUserData(user: User) {
     this.currentUserSubject.next(user);
-    this.setUser(user.email); 
+    this.setUser(user.email);
   }
 
   loginUser(email: string, password: string): Observable<User> {
     const params = new HttpParams()
       .set('email', email)
       .set('password', password);
-  
+
     return this.http.post<User>(`${this.baseUrl}/users/login`, null, { params });
-  }  
+  }
 
   signupUser(user: User): Observable<any> {
     const headers = new HttpHeaders({
@@ -75,17 +75,17 @@ export class UserService {
     const headers = new HttpHeaders({
       'Content-Type': 'application/json'
     });
-  
+
     if (!user.id) {
       throw new Error('User ID is required for update');
     }
-  
+
     return this.http.put(`${this.baseUrl}/users/${user.id}`, user, {
       headers,
       responseType: 'json'
     });
   }
-  
+
   userHasAnyRole(requiredRoles: string[]): boolean {
     const currentUser = this.currentUserSubject.value;
     if (!currentUser || !currentUser.roles) return false;
@@ -100,5 +100,9 @@ export class UserService {
 
   getCurrentUser(): User | null {
     return this.currentUserSubject.value;
+  }
+
+  updateUserRoles(userId: number, roles: string[]): Observable<any> {
+    return this.http.put(`${this.baseUrl}/users/${userId}/roles`, roles);
   }
 }
