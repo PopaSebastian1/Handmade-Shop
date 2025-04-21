@@ -7,6 +7,9 @@ import com.example.handmadeshop.repository.RoleRepository;
 import com.example.handmadeshop.repository.UserRepository;
 import jakarta.ejb.Stateless;
 import jakarta.inject.Inject;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -16,6 +19,9 @@ public class UserService {
     private UserRepository userRepository;
     @Inject
     private RoleRepository roleRepository;
+
+    @PersistenceContext
+    private EntityManager em;
 
     public UserDTO createUser(UserDTO userDTO) {
         User user = ModeMapper.toUser(userDTO);
@@ -108,6 +114,9 @@ public class UserService {
                 }
             }
 
+            em.flush();
+            em.clear();
+
             User updatedUser = userRepository.update(existingUser);
             return toDTO(updatedUser);
         }
@@ -136,6 +145,9 @@ public class UserService {
                 userRepository.addRoleToUser(userId, role.getId());
             }
         }
+
+        em.flush();
+        em.clear();
 
         // Get fresh data with roles
         User updatedUser = userRepository.findByIdWithRoles(userId);

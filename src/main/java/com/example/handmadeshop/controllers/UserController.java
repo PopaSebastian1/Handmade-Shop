@@ -71,15 +71,8 @@ public class UserController {
                     .build();
         }
 
-        List<User> allUsers = userRepository.findAll();
-        User matchedUser = null;
-
-        for (User user : allUsers) {
-            if (email.equals(user.getEmail())) {
-                matchedUser = user;
-                break;
-            }
-        }
+        // Use a query that fetches user with roles
+        User matchedUser = userRepository.findByEmailWithRoles(email);
 
         if (matchedUser != null && matchedUser.getPassword().equals(password)) {
             UserDTO userDTO = ModeMapper.toUserDTO(matchedUser);

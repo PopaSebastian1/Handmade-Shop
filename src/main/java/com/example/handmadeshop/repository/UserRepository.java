@@ -60,6 +60,20 @@ public class UserRepository {
                 .executeUpdate();
     }
 
+    public User findByEmailWithRoles(String email) {
+        try {
+            return em.createQuery(
+                            "SELECT DISTINCT u FROM User u " +
+                                    "LEFT JOIN FETCH u.userRoles ur " +
+                                    "LEFT JOIN FETCH ur.roleid " +
+                                    "WHERE u.email = :email", User.class)
+                    .setParameter("email", email)
+                    .getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+
     public User findByIdWithRoles(Integer id) {
         try {
             return em.createQuery(
