@@ -1,15 +1,15 @@
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-<button class="fixed-plus" (click)="addNewItem()">+</button>
+<button *appHasRole="['seller']" class="fixed-plus" (click)="addNewItem()">+</button>
 <table class="container">
     <tr *ngFor="let product of products" class="card">
         <td>
             <div class="card-content">
-                <img [src]="product.imagePath" (click)="viewProductDetails(product.imagePath)" alt="{{ product.name }}">
-                <h4 class="name">{{ product.productName }}</h4>
+                <img [src]="product.image" (click)="viewProductDetails(product.image)" alt="{{ product.name }}">
+                <h4 class="name">{{ product.name }}</h4>
                 <p class="name">Price: ${{ product.price }}</p>
             </div>
             <button class="button"
-                (click)="addItemToCart(product.name, product.price, product.description, product.imagePath)">Add to
+                (click)="addItemToCart(product.name, product.price, product.description, product.image)">Add to
                 cart</button>
         </td>
     </tr>

@@ -17,20 +17,16 @@ public class ModeMapper {
         dto.setName(user.getName());
         dto.setSurname(user.getSurname());
         dto.setEmail(user.getEmail());
+        dto.setPassword(user.getPassword());
+        dto.setClientId(user.getClientid());
+        dto.setClientSecret(user.getClientsecret());
 
-        List<String> roles = Optional.ofNullable(user.getUserRoles())
-                .orElse(Collections.emptyList())
-                .stream()
-                .map(userRole -> {
-                    if (userRole != null && userRole.getRoleid() != null) {
-                        return userRole.getRoleid().getName();
-                    }
-                    return null;
-                })
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
-
-        dto.setRoles(roles);
+        // Adăugăm lista de roluri
+        if (user.getUserRoles() != null) {
+            dto.setRoles(user.getUserRoles().stream()
+                    .map(ur -> ur.getRoleid().getName())
+                    .collect(Collectors.toList()));
+        }
 
         return dto;
     }

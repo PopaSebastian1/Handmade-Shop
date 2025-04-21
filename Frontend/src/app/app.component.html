@@ -1,11 +1,8 @@
-<!DOCTYPE html>
-<div *ngIf="(dataService.isLoggedIn | async) && dataService.shouldDisplay(); else showLogin">
-  <app-menu class="fixed-menu"></app-menu>
+<div class="app-container">
+  <div class="fixed-menu">
+    <app-menu></app-menu>
+  </div>
   <div class="main-content">
     <router-outlet></router-outlet>
   </div>
 </div>
-
-<ng-template #showLogin>
-  <router-outlet></router-outlet>
-</ng-template>

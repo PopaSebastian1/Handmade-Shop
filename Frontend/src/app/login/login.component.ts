@@ -1,11 +1,10 @@
-// login.component.ts
 import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormBuilder, Validators } from '@angular/forms';
-import { DataService } from '../data.service';
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { User } from '../../models/user.model';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { User } from '../models/user.model';
 import { GoogleAuthService } from '../../app/services/google-auth/google-auth.service';
+import { UserService } from '../services/user-service/user.service';
 
 @Component({
   selector: 'app-login',
@@ -35,14 +34,14 @@ export class LoginComponent implements OnInit, AfterViewInit {
   });
 
   constructor(
-    private authService: DataService,
+    private userService: UserService,
     private router: Router,
     private http: HttpClient,
     private fb: FormBuilder,
-    private googleAuthService: GoogleAuthService // Injectăm noul serviciu
+    private googleAuthService: GoogleAuthService
   ) { }
 
-  ngOnInit(): void {}
+  ngOnInit(): void { }
 
   ngAfterViewInit(): void {
     this.googleAuthService.loadGoogleScript().subscribe(success => {
@@ -58,10 +57,10 @@ export class LoginComponent implements OnInit, AfterViewInit {
   initializeGoogleButtons(): void {
     const loginContainer = document.getElementById('google-login-btn-container');
     const loginSuccess = this.googleAuthService.initializeLoginButton(loginContainer);
-    
+
     const signupContainer = document.getElementById('google-signup-btn-container');
     const signupSuccess = this.googleAuthService.initializeSignupButton(signupContainer);
-    
+
     this.googleButtonRendered = loginSuccess && signupSuccess;
     console.log('Google buttons initialized:', this.googleButtonRendered);
   }
@@ -75,42 +74,23 @@ export class LoginComponent implements OnInit, AfterViewInit {
     }
   }
 
-  loginUser(email: string, password: string) {
-    const params = new HttpParams()
-      .set('email', email)
-      .set('password', password);
-  
-    return this.http.post(`${this.baseURL}/login`, null, {
-      params: params,
-      responseType: 'text' 
-    });
-  }
-
   onLogin(event: Event): void {
     event.preventDefault();
-    if (this.loginForm.valid) {
-      const email = this.loginForm.value.email;
-      const password = this.loginForm.value.password;
-      if (email && password) {
-        this.loginUser(email, password).subscribe({
-          next: (response: any): void => {
-            console.log('Login response:', response);
-            // Verifică dacă răspunsul indică o eroare cunoscută
-            if (response === 'Invalid email or password') {
-              this.togglePopup(); 
-            } else {
-              // Pentru orice alt răspuns, considerăm login-ul reușit
-              this.authService.setUser(email);
-              this.router.navigate(['/home']);
-            }
-          },
-          error: (error: unknown): void => {
-            console.error('Login error:', error);
-            this.togglePopup();
-          }
-        });
+  
+    if (this.loginForm.invalid) return;
+  
+    const { email, password } = this.loginForm.value;
+  
+    this.userService.loginUser(email!, password!).subscribe({
+      next: (user: User) => {
+        this.userService.setUserData(user); // salvează tot userul
+        this.router.navigate(['/home']);
+      },
+      error: (error) => {
+        console.error('Login error:', error);
+        this.togglePopup();
       }
-    }
+    });
   }
   
 
@@ -127,30 +107,32 @@ export class LoginComponent implements OnInit, AfterViewInit {
 
   onSignup(event: Event): void {
     event.preventDefault();
-  
-    if (this.signupForm.valid) {
-      const name = this.signupForm.value.name!;
-      const surname = this.signupForm.value.surename!;
-      const email = this.signupForm.value.email!;
-      const password = this.signupForm.value.password!;
-      const roles = ["viewer"];
-  
-      const newUser = new User(name, surname, email, password, roles);
-  
-      this.signupUser(newUser).subscribe({
-        next: (response: any): void => {
-          console.log('Signup response:', response);
-          // Orice răspuns de succes ar trebui să ne ducă la pagina home
-          // Nu mai verificăm doar 'User created', ci acceptăm orice răspuns pozitiv
-          this.authService.setUser(email);
-          this.router.navigate(['/home']);
-        },
-        error: (error: unknown): void => {
-          console.error('Signup error:', error);
-          // Aici ai putea adăuga un popup de eroare
-          this.togglePopup();
-        }
-      });
-    }
+
+    if (this.signupForm.invalid) return;
+
+    const { name, surename, email, password } = this.signupForm.value;
+
+    if (!name || !surename || !email || !password) return;
+
+    const newUser = new User(
+      name,
+      surename,
+      email,
+      ["viewer"],
+      password,
+    );
+
+    this.userService.signupUser(newUser).subscribe({
+      next: () => this.handleSuccessfulAuth(email!),
+      error: (error) => {
+        console.error('Signup error:', error);
+        this.togglePopup();
+      }
+    });
+  }
+
+  private handleSuccessfulAuth(email: string): void {
+    this.userService.setUser(email);
+    this.router.navigate(['/home']);
   }
 }

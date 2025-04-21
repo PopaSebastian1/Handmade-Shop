@@ -12,7 +12,8 @@ public class ProductDTO {
     private String image;
 
     // Constructors
-    public ProductDTO() {}
+    public ProductDTO() {
+    }
 
     public ProductDTO(Integer id, String name, BigDecimal price, Integer quantity,
                       String description, BigDecimal rating, String image) {

@@ -19,10 +19,9 @@ public class UserService {
 
     public UserDTO createUser(UserDTO userDTO) {
         User user = ModeMapper.toUser(userDTO);
-
         userRepository.create(user);
 
-        // Add roles if specified
+        // Adăugăm rolurile
         if (userDTO.getRoles() != null) {
             for (String roleName : userDTO.getRoles()) {
                 Role role = roleRepository.findByName(roleName);
@@ -32,8 +31,10 @@ public class UserService {
             }
         }
 
-        return ModeMapper.toUserDTO(user);
+        User freshUser = userRepository.findById(user.getId());
+        return toDTO(freshUser);
     }
+
 
     public UserDTO toDTO(User user) {
         UserDTO dto = new UserDTO();
@@ -55,9 +56,10 @@ public class UserService {
     }
 
     public UserDTO getUserById(Integer id) {
-        User user = userRepository.findById(id);
+        User user = userRepository.findByIdWithRoles(id);
         return user != null ? toDTO(user) : null;
     }
+
     public UserDTO findByEmail(String email) {
         KmsEncryptionService kmsEncryptionService = new KmsEncryptionService();
         List<User> allUsers = userRepository.findAll();
@@ -96,14 +98,47 @@ public class UserService {
                 existingUser.setPassword(userDTO.getPassword());
             }
 
+            userRepository.removeAllRoles(id); // ștergem rolurile vechi
+            if (userDTO.getRoles() != null) {
+                for (String roleName : userDTO.getRoles()) {
+                    Role role = roleRepository.findByName(roleName);
+                    if (role != null) {
+                        userRepository.addRoleToUser(id, role.getId()); // adăugăm noile roluri
+                    }
+                }
+            }
+
             User updatedUser = userRepository.update(existingUser);
             return toDTO(updatedUser);
         }
         return null;
     }
 
+
     public void deleteUser(Integer id) {
         userRepository.delete(id);
     }
 
+    public UserDTO updateUserRoles(Integer userId, List<String> roleNames) {
+        // Start by getting user without roles to avoid caching issues
+        User user = userRepository.findById(userId);
+        if (user == null) {
+            throw new IllegalArgumentException("User not found");
+        }
+
+        // Clear existing roles
+        userRepository.removeAllRoles(userId);
+
+        // Add new roles
+        for (String roleName : roleNames) {
+            Role role = roleRepository.findByName(roleName);
+            if (role != null) {
+                userRepository.addRoleToUser(userId, role.getId());
+            }
+        }
+
+        // Get fresh data with roles
+        User updatedUser = userRepository.findByIdWithRoles(userId);
+        return toDTO(updatedUser);
+    }
 }

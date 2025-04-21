@@ -75,7 +75,7 @@ public class UserController {
         User matchedUser = null;
 
         for (User user : allUsers) {
-            if (email.equals(email)) {
+            if (email.equals(user.getEmail())) {
                 matchedUser = user;
                 break;
             }
@@ -91,5 +91,21 @@ public class UserController {
                 .entity("{\"error\":\"Invalid email or password\"}")
                 .type(MediaType.APPLICATION_JSON)
                 .build();
+    }
+
+    @PUT
+    @Path("/{userId}/roles")
+    public Response updateUserRoles(
+            @PathParam("userId") Integer userId,
+            List<String> roleNames
+    ) {
+        try {
+            UserDTO updatedUser = userService.updateUserRoles(userId, roleNames);
+            return Response.ok(updatedUser).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity("Error updating roles: " + e.getMessage())
+                    .build();
+        }
     }
 }

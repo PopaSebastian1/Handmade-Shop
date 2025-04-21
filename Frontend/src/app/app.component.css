@@ -6,7 +6,10 @@
 }
 
 .main-content {
-    padding-top: 80px;
     background-color: rgba(209, 152, 201, 0.466);
     height: -webkit-fill-available;
+}
+
+.app-container {
+    overflow-y: auto;
 }

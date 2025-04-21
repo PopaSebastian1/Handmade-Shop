@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { DataService } from '../data.service';
 import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
+import { ProductService } from '../services/product-service/product.service';
+import { Product } from '../models/product.model';
 
 @Component({
   selector: 'app-products',
@@ -11,37 +12,35 @@ import { Router } from '@angular/router';
 export class ProductsComponent implements OnInit {
   cartItems: any[] = [];
   cartSubscription: Subscription = new Subscription();
-  products: any[] = [];
-  nume: string = '';
+  products: Product[] = [];
   showPopup = false;
 
   togglePopup() {
     this.showPopup = !this.showPopup;
   }
 
-  constructor(private dataService: DataService, private router: Router) {
-    this.nume = '';
+  constructor(private productService: ProductService, private router: Router) {
   }
 
   addItemToCart(name: string, price: number, description: string, image: string, count: number = 1) {
 
-    this.cartSubscription = this.dataService.getCart(this.nume).subscribe(cart => {
-      this.cartItems = cart;
-    });
+    // this.cartSubscription = this.productService.getCart(this.nume).subscribe(cart => {
+    //   this.cartItems = cart;
+    // });
 
-    const item = this.cartItems.find(item => item.imagePath === image);
+    // const item = this.cartItems.find(item => item.imagePath === image);
 
-    if (item) {
-      this.dataService.increaseCount(item).subscribe(response => {
-        item.count++;
-      });
-    } else {
-      this.dataService.addProductToUserByImagePath(image).subscribe(response => {
-      });
-      this.cartSubscription = this.dataService.getCart(this.nume).subscribe(cart => {
-        this.cartItems = cart;
-      });
-    }
+    // if (item) {
+    //   this.productService.increaseCount(item).subscribe(response => {
+    //     item.count++;
+    //   });
+    // } else {
+    //   this.productService.addProductToUserByImagePath(image).subscribe(response => {
+    //   });
+    //   this.cartSubscription = this.productService.getCart(this.nume).subscribe(cart => {
+    //     this.cartItems = cart;
+    //   });
+    // }
   }
 
   viewProductDetails(image: string) {
@@ -59,17 +58,17 @@ export class ProductsComponent implements OnInit {
     if (state?.refresh) {
       this.refreshProducts();
     } else {
-      this.dataService.getProducts().subscribe(products => {
+      this.productService.getAllProducts().subscribe(products => {
         this.products = products;
       });
     }
   }
 
   refreshProducts() {
-    this.dataService.getProducts().subscribe(products => {
-      this.products = products;
-      console.log('Products updated after delete');
-    });
+    // this.productService.getProducts().subscribe(products => {
+    //   this.products = products;
+    //   console.log('Products updated after delete');
+    // });
   }
 
   ngOnDestroy() {
@@ -100,17 +99,17 @@ export class ProductsComponent implements OnInit {
     };
 
 
-    await this.dataService.addProduct(newProduct).toPromise();
+    // await this.productService.addProduct(newProduct).toPromise();
 
-    console.log('Produs adăugat:', newProduct);
+    // console.log('Produs adăugat:', newProduct);
 
-    this.dataService.getProducts().subscribe(products => {
-      this.products = products;
-    });
+    // this.productService.getProducts().subscribe(products => {
+    //   this.products = products;
+    // });
 
-    this.cartSubscription = this.dataService.getCart(this.nume).subscribe(cart => {
-      this.cartItems = cart;
-    });
+    // this.cartSubscription = this.productService.getCart(this.nume).subscribe(cart => {
+    //   this.cartItems = cart;
+    // });
 
     this.resetForm();
     this.togglePopup();

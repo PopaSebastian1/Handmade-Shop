@@ -14,6 +14,7 @@ import { MenuComponent } from './menu/menu.component';
 import { PayComponent } from './pay/pay.component';
 import { ProductDetailsComponent } from './product-details/product-details.component';
 import { FormsModule } from '@angular/forms';
+import { HasRoleDirective } from './has-role.directive';
 
 @NgModule({
   declarations: [
@@ -25,7 +26,8 @@ import { FormsModule } from '@angular/forms';
     CartComponent,
     MenuComponent,
     PayComponent,
-    ProductDetailsComponent
+    ProductDetailsComponent,
+    HasRoleDirective
   ],
   imports: [
     BrowserModule,

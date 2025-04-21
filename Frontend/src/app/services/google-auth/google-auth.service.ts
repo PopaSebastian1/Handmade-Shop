@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Observable, from, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
-import { GoogleResponse } from '../../../models/GoogleResponse';
-import { ServerResponse } from '../../../models/ServerResponse';
+import { GoogleResponse } from '../../models/GoogleResponse';
+import { ServerResponse } from '../../models/ServerResponse';
 import { Router } from '@angular/router';
 import { DataService } from '../../data.service';
 // Extinde interfața Window pentru a include obiectul google

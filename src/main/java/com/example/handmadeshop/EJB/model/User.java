@@ -44,7 +44,7 @@ public class User {
     @Column(name = "clientsecret")
     private String clientsecret;
 
-    @OneToMany(mappedBy = "userid", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "userid", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<UserRole> userRoles = new ArrayList<>();
 
     @OneToMany(mappedBy = "userid", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -122,17 +122,19 @@ public class User {
         this.userProducts = userProducts;
     }
 
-    // Helper methods for relationships
     public void addRole(Role role) {
-        UserRole userRole = new UserRole();
-        UserRoleId id = new UserRoleId();
-        id.setUserid(this.id);
-        id.setRoleid(role.getId());
-        userRole.setId(id);
-        userRole.setUserid(this);
-        userRole.setRoleid(role);
-        this.userRoles.add(userRole);
+        if (userRoles.stream().noneMatch(ur -> ur.getRoleid().equals(role))) {
+            UserRole userRole = new UserRole();
+            UserRoleId id = new UserRoleId();
+            id.setUserid(this.id);
+            id.setRoleid(role.getId());
+            userRole.setId(id);
+            userRole.setUserid(this);
+            userRole.setRoleid(role);
+            this.userRoles.add(userRole);
+        }
     }
+
 
     public void removeRole(Role role) {
         userRoles.removeIf(ur -> ur.getRoleid().equals(role));

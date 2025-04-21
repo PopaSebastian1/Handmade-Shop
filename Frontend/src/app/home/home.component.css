@@ -109,6 +109,7 @@ body {
 }
 
 .cd__main {
+  margin-top: 60px;
   padding: 20px;
   flex-direction: row;
   flex-wrap: wrap;

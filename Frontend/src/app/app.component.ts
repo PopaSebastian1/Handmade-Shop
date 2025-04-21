@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { DataService } from './data.service';
 import { Router, NavigationStart } from '@angular/router';
+import { UserService } from './services/user-service/user.service';
 
 @Component({
   selector: 'app-root',
@@ -11,11 +12,11 @@ export class AppComponent {
   title = 'HandmadeShopping';
   showMenu = true; 
 
-  constructor(public dataService: DataService, private router: Router) {
+  constructor(public userService: UserService, private router: Router) {
     router.events.subscribe(event => {
       if (event instanceof NavigationStart) {
         if (event.url === '/login' || event.url === '/') {
-          this.dataService.setLoggedIn(false);
+          this.userService.setLoggedIn(false);
           this.showMenu = false; 
         } else {
           this.showMenu = true; 

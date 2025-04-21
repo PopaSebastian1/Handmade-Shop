@@ -3,6 +3,7 @@ package com.example.handmadeshop.repository;
 import com.example.handmadeshop.EJB.model.*;
 import jakarta.ejb.Stateless;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
 import java.util.List;
 
@@ -51,5 +52,23 @@ public class UserRepository {
         userRole.setUserid(findById(userId));
         userRole.setRoleid(em.find(Role.class, roleId));
         em.persist(userRole);
+    }
+
+    public void removeAllRoles(Integer userId) {
+        em.createQuery("DELETE FROM UserRole ur WHERE ur.id.userid = :userId")
+                .setParameter("userId", userId)
+                .executeUpdate();
+    }
+
+    public User findByIdWithRoles(Integer id) {
+        try {
+            return em.createQuery(
+                            "SELECT DISTINCT u FROM User u LEFT JOIN FETCH u.userRoles ur LEFT JOIN FETCH ur.roleid WHERE u.id = :id",
+                            User.class)
+                    .setParameter("id", id)
+                    .getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
     }
 }
