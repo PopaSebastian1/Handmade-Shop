@@ -3,6 +3,10 @@
   font-size: 20px;
 }
 
+.top-margin {
+  margin-top: 60px;
+}
+
 .cart {
   width: 80%;
   margin: auto;
@@ -13,11 +17,6 @@
   padding: 20px;
   border-radius: 5px;
   font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif !important;
-}
-
-.empty-cart .full-page-image {
-  width: 30%;
-  height: 72.3vh;
 }
 
 .cart-item {
@@ -83,8 +82,8 @@ button:hover {
 }
 
 .empty-cart img {
-  width: 50%;
-  height: auto;
+  width: auto;
+  height: 50%;
 }
 
 .finish-button {

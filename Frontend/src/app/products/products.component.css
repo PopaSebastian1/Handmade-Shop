@@ -1,3 +1,7 @@
+.top-page {
+  margin-top: 80px ; 
+}
+
 .fixed-plus {
   position: fixed;
   bottom: 20px; 
@@ -27,7 +31,7 @@
   justify-content: center;
   font-family: 'Satisfy', cursive;
   width: 60%;
-  margin: 0 auto;
+  margin: 0 auto 0;
 }
 
 .body {

@@ -8,8 +8,10 @@
 .main-content {
     background-color: rgba(209, 152, 201, 0.466);
     height: -webkit-fill-available;
+    overflow-y: auto;
 }
 
 .app-container {
     overflow-y: auto;
+    height: -webkit-fill-available;
 }

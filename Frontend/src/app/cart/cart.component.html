@@ -1,3 +1,4 @@
+<div class="top-margin">
 <div class="cart" *ngIf="cart.length > 0; else emptyCart">
   <div *ngFor="let item of cart" class="cart-item">
     <div class="item-image">
@@ -26,3 +27,4 @@
     <button class="empty-button" (click)="navigateToProducts()">Go to Products</button>
   </div>
 </ng-template>
+</div>
