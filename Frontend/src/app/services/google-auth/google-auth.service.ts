@@ -196,7 +196,7 @@ export class GoogleAuthService {
     const token = response.credential;
     console.log('Google token received (first 20 chars):', token.substring(0, 20) + '...');
     
-    const apiUrl = `${this.baseURL}/google/login`;
+    const apiUrl = `${this.baseURL}/google/authenticate`;
     
     // Folosește formatul corect pentru backend
     const requestPayload = { idToken: token };
@@ -208,9 +208,7 @@ export class GoogleAuthService {
     }).pipe(
       tap(response => {
         console.log('Server login response:', response);
-        // Dacă primim un răspuns, considerăm autentificarea reușită
         if (response) {
-          // Extragem email-ul din răspuns (dacă există)
           const email = response.email || 'google-user@example.com';
           this.authService.setUser(email);
           this.router.navigate(['/home']);
@@ -229,9 +227,8 @@ handleGoogleSignup(response: GoogleResponse): Observable<ServerResponse> {
   const token = response.credential;
   console.log('Google token received (first 20 chars):', token.substring(0, 20) + '...');
   
-  const apiUrl = `${this.baseURL}/google/register`;
+  const apiUrl = `${this.baseURL}/google/authenticate`;
   
-  // Construiește obiectul conform cu GoogleTokenRequest din backend
   const requestPayload = { idToken: token };
   
   console.log('Sending payload with idToken property');

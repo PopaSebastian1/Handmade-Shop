@@ -49,7 +49,6 @@ public class UserService {
         dto.setSurname(user.getSurname());
         dto.setEmail(user.getEmail());
         dto.setClientId(user.getClientid());
-        dto.setClientSecret(user.getClientsecret());
 
         // Map roles
         if (user.getUserRoles() != null) {

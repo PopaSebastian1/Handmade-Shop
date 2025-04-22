@@ -4,9 +4,9 @@ import java.util.List;
 
 public class UserDTO {
     private Integer id;
+    private String email;
     private String name;
     private String surname;
-    private String email;
     private String password;
     private String clientId;
     private String clientSecret;
