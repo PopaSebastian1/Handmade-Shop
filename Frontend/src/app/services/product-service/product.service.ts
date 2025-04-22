@@ -12,7 +12,7 @@ import { Product } from '../../models/product.model';
 export class ProductService {
   private apiUrl = `${environment.apiUrl}/products`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   getAllProducts(): Observable<Product[]> {
     return this.http.get<Product[]>(this.apiUrl);
@@ -36,5 +36,18 @@ export class ProductService {
 
   addUserToProduct(productId: number, userId: number, quantity: number = 1): Observable<void> {
     return this.http.post<void>(`${this.apiUrl}/${productId}/users/${userId}?quantity=${quantity}`, {});
+  }
+
+  // New method for seller to add product for sale
+  addProductForSale(sellerId: number, product: Product): Observable<Product> {
+    return this.http.post<Product>(`${this.apiUrl}/seller/${sellerId}`, product);
+  }
+
+  // New method to associate user with product (generic)
+  associateUserWithProduct(productId: number, userId: number, quantity: number): Observable<void> {
+    return this.http.post<void>(
+      `${this.apiUrl}/${productId}/user/${userId}?quantity=${quantity}`,
+      {}
+    );
   }
 }
