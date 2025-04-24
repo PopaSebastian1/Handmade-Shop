@@ -75,7 +75,7 @@ public class UserController {
                     .build();
         }
 
-        AuthResponseDTO authResponse = authenticationService.authenticate(email, password);
+        String authResponse = authenticationService.authenticate(email, password);
 
         if (authResponse != null) {
             return Response.ok(authResponse).build();

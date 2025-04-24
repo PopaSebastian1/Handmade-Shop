@@ -1,18 +1,18 @@
 // src/app/services/product.service.ts
 
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../google-auth/environment';
 import { Product } from '../../models/product.model';
-
+import { JwtDecoderService } from '../jwt-decoder/jwt-decoder.service';
 @Injectable({
   providedIn: 'root',
 })
 export class ProductService {
   private apiUrl = `${environment.apiUrl}/products`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private jwtDecoder:JwtDecoderService) {}
 
   getAllProducts(): Observable<Product[]> {
     return this.http.get<Product[]>(this.apiUrl);

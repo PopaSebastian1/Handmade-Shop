@@ -36,15 +36,13 @@ public class GoogleAuthController {
             // Check if user exists
             UserDTO existingUser = googleAuthService.findGoogleUser(token);
 
-            // User exists - proceed with login
             if (existingUser != null) {
-                AuthResponseDTO authResponse = authenticationService.authenticateGoogle(existingUser);
+                String authResponse = authenticationService.authenticate(existingUser.getEmail(), existingUser.getPassword());
                 return Response.ok(authResponse).build();
             }
 
-            // User doesn't exist - register new user
             UserDTO newUser = googleAuthService.registerGoogleUser(token);
-            AuthResponseDTO authResponse = authenticationService.authenticateGoogle(newUser);
+            String authResponse = authenticationService.authenticate(newUser.getEmail(), newUser.getPassword());
             return Response.ok(authResponse).build();
         } catch (Exception e) {
             e.printStackTrace(); // For debugging

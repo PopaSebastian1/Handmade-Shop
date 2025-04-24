@@ -1,6 +1,6 @@
 package com.example.handmadeshop;
 
-import com.example.handmadeshop.Security.JwtAuthFilter;
+import com.example.handmadeshop.Security.JWTAuthFilter;
 import com.example.handmadeshop.controllers.GoogleAuthController;
 import com.example.handmadeshop.controllers.ProductController;
 import com.example.handmadeshop.controllers.RoleController;
@@ -19,7 +19,7 @@ public class JAXRSConfiguration extends Application {
                 RoleController.class,
                 CorsFilter.class,
                 GoogleAuthController.class,
-                JwtAuthFilter.class
+                JWTAuthFilter.class
         );
     }
 }

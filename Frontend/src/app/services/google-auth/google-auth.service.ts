@@ -6,6 +6,9 @@ import { GoogleResponse } from '../../models/GoogleResponse';
 import { ServerResponse } from '../../models/ServerResponse';
 import { Router } from '@angular/router';
 import { DataService } from '../../data.service';
+import { JwtDecoderService } from '../jwt-decoder/jwt-decoder.service';
+import { UserService } from '../user-service/user.service';
+
 // Extinde interfața Window pentru a include obiectul google
 declare global {
   interface Window {
@@ -33,7 +36,9 @@ export class GoogleAuthService {
   constructor(
     private http: HttpClient,
     private router: Router,
-    private authService: DataService
+    private authService: DataService,
+    private userService: UserService,
+    private jwtDecoder: JwtDecoderService
   ) {}
   
 
@@ -176,21 +181,8 @@ export class GoogleAuthService {
   /**
    * Afișează dialogul Google Sign-In pentru înregistrare
    */
-  promptGoogleSignup(): void {
-    if (window.google && window.google.accounts) {
-      window.google.accounts.id.initialize({
-        client_id: this.googleClientId,
-        callback: (response: GoogleResponse) => {
-          this.handleGoogleSignup(response).subscribe();
-        }
-      });
-      window.google.accounts.id.prompt();
-    } else {
-      console.error('Google API not loaded properly');
-    }
-  }
 
-  handleGoogleLogin(response: GoogleResponse): Observable<ServerResponse> {
+  handleGoogleLogin(response: GoogleResponse): Observable<any> {
     console.log('Google Sign-In login received:', response);
     
     const token = response.credential;
@@ -198,46 +190,56 @@ export class GoogleAuthService {
     
     const apiUrl = `${this.baseURL}/google/authenticate`;
     
-    // Folosește formatul corect pentru backend
+    // Păstrăm formatul existent al payload-ului
     const requestPayload = { idToken: token };
     
-    return this.http.post<ServerResponse>(apiUrl, requestPayload, {
+    return this.http.post(apiUrl, requestPayload, {
       headers: new HttpHeaders({
         'Content-Type': 'application/json'
-      })
+      }),
+      responseType: 'text'  // Specificăm că așteptăm un răspuns text (JWT)
     }).pipe(
-      tap(response => {
-        console.log('Server login response:', response);
-        if (response) {
-          const email = response.email || 'google-user@example.com';
-          this.authService.setUser(email);
-          this.router.navigate(['/home']);
-        }
+      tap(jwtToken => {
+        console.log('Server returned JWT token (first 20 chars):', jwtToken.substring(0, 20) + '...');
+        
+        // Importă JwtDecoderService și UserService în constructor pentru a folosi următoarele:
+      
+        
+        // Opțiunea 2: Folosind UserService (recomandată)
+        this.userService.processJwtToken(jwtToken);
+        this.router.navigate(['/home']);
       }),
       catchError(error => {
         console.error('Google login error:', error);
+        
+        // Logger pentru debugging
+        if (error instanceof HttpErrorResponse) {
+          console.error('Status:', error.status, 'Status Text:', error.statusText);
+          if (error.error && typeof error.error === 'string') {
+            console.error('Server error message:', error.error);
+          }
+        }
+        
         throw error;
       })
     );
   }
   
-handleGoogleSignup(response: GoogleResponse): Observable<ServerResponse> {
-  console.log('Google Sign-Up received:', response);
-  
-  const token = response.credential;
-  console.log('Google token received (first 20 chars):', token.substring(0, 20) + '...');
-  
-  const apiUrl = `${this.baseURL}/google/authenticate`;
-  
-  const requestPayload = { idToken: token };
-  
-  console.log('Sending payload with idToken property');
-  
-  return this.http.post<ServerResponse>(apiUrl, requestPayload, {
-    headers: new HttpHeaders({
-      'Content-Type': 'application/json'
-    })
-  }).pipe(
+  handleGoogleSignup(response: GoogleResponse): Observable<ServerResponse> {
+    console.log('Google Sign-Up received:', response);
+    
+    const token = response.credential;
+    console.log('Google token received (first 20 chars):', token);
+    
+    const apiUrl = `${this.baseURL}/google/authenticate`;
+    
+    const requestPayload = token;
+
+return this.http.post<ServerResponse>(apiUrl, requestPayload, {
+  headers: new HttpHeaders({
+    'Content-Type': 'text/plain'  
+  })
+}).pipe(
     tap(response => {
       console.log('Server register response:', response);
       

@@ -1,7 +1,7 @@
 package com.example.handmadeshop.controllers;
 
 import com.example.handmadeshop.DTO.ProductDTO;
-import com.example.handmadeshop.Security.Secured;
+import com.example.handmadeshop.Security.Autenticated;
 import com.example.handmadeshop.service.ProductService;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
@@ -19,9 +19,7 @@ public class ProductController {
     @Inject
     private ProductService productService;
 
-    @POST
-    @Secured({"buyer"})
-    public Response createProduct(ProductDTO productDTO) {
+    @POST public Response createProduct(ProductDTO productDTO) {
         logger.info("Creating product: " + productDTO);
         try {
             ProductDTO createdProduct = productService.createProduct(productDTO);
@@ -37,7 +35,7 @@ public class ProductController {
     }
 
     @GET
-    @Secured({"buyer"})
+    //@Autenticated
     public Response getAllProducts() {
         logger.info("Fetching all products");
         try {

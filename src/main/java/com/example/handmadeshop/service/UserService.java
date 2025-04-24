@@ -27,7 +27,6 @@ public class UserService {
         User user = ModeMapper.toUser(userDTO);
         userRepository.create(user);
 
-        // Adăugăm rolurile
         if (userDTO.getRoles() != null) {
             for (String roleName : userDTO.getRoles()) {
                 Role role = roleRepository.findByName(roleName);
@@ -71,8 +70,8 @@ public class UserService {
         User matchedUser = null;
 
         for (User user : allUsers) {
-            String decryptedEmail = kmsEncryptionService.decrypt(user.getEmail());
-            if (decryptedEmail.equals(email)) {
+          //  String decryptedEmail = kmsEncryptionService.decrypt(user.getEmail());
+            if (user.getEmail().equals(email)) {
                 matchedUser = user;
                 break;
             }
@@ -96,8 +95,8 @@ public class UserService {
             existingUser.setName(userDTO.getName());
             existingUser.setSurname(userDTO.getSurname());
             existingUser.setEmail(userDTO.getEmail());
-            existingUser.setClientid(userDTO.getClientId());
-            existingUser.setClientsecret(userDTO.getClientSecret());
+//            existingUser.setClientid(userDTO.getClientId());
+//            existingUser.setClientsecret(userDTO.getClientSecret());
 
             if (userDTO.getPassword() != null) {
                 existingUser.setPassword(userDTO.getPassword());
