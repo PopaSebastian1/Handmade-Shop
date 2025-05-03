@@ -76,6 +76,22 @@ public class ProductService {
         }
     }
 
+    public List<ProductDTO> getProductsWithUserQuantities(Integer userId) {
+        List<Object[]> results = productRepository.findProductsWithUserQuantities(userId);
+
+        return results.stream()
+                .map(result -> {
+                    Product product = (Product) result[0];
+                    Integer userQuantity = (Integer) result[1];
+
+                    ProductDTO dto = ModeMapper.toProductDTO(product);
+                    // Suprascriem quantity-ul din produs cu cel din asociere
+                    dto.setQuantity(userQuantity);
+                    return dto;
+                })
+                .collect(Collectors.toList());
+    }
+
     public List<ProductDTO> getProductsBySeller(Integer sellerId) {
         return productRepository.findBySeller(sellerId).stream()
                 .map(ModeMapper::toProductDTO)

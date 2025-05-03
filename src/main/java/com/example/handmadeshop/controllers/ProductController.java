@@ -22,6 +22,21 @@ public class ProductController {
     @Inject
     private UserService userService;
 
+    @GET
+    @Path("/user/{userId}")
+    public Response getProductsWithUserQuantities(@PathParam("userId") int userId) {
+        logger.info("Fetching products with user quantities for user ID: " + userId);
+        try {
+            List<ProductDTO> products = productService.getProductsWithUserQuantities(userId);
+            return Response.ok(products).build();
+        } catch (Exception e) {
+            logger.severe("Error fetching products with quantities: " + e.getMessage());
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("Error fetching products with quantities")
+                    .build();
+        }
+    }
+
     @POST
     public Response createProduct(ProductDTO productDTO) {
         logger.info("Creating product: " + productDTO);

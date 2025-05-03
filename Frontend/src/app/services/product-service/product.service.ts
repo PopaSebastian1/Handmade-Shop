@@ -50,4 +50,9 @@ export class ProductService {
       {}
     );
   }
+  
+  // New method to get products with user-specific quantities
+  getProductsForUserWithQuantities(userId: number): Observable<Product[]> {
+    return this.http.get<Product[]>(`${this.apiUrl}/user/${userId}`);
+  }
 }

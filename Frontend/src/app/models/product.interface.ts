@@ -6,5 +6,6 @@ export interface IProduct {
     description: string;
     rating: number;
     image: string;
+    toSafeObject?: () => any; 
   }
   

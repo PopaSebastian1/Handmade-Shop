@@ -15,6 +15,16 @@ public class ProductRepository {
     @PersistenceContext(unitName = "handmadePU")
     private EntityManager em;
 
+    public List<Object[]> findProductsWithUserQuantities(Integer userId) {
+        return em.createQuery(
+                        "SELECT p, up.quantity FROM Product p " +
+                                "JOIN p.userProducts up " +
+                                "WHERE up.userid.id = :userId AND up.quantity > 0",
+                        Object[].class)
+                .setParameter("userId", userId)
+                .getResultList();
+    }
+
     public UserProduct findUserProductAssociation(Integer userId, Integer productId) {
         try {
             return em.createQuery(

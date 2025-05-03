@@ -9,39 +9,42 @@
                     <h4 class="name">{{ product.name }}</h4>
                     <p class="name">Price: ${{ product.price }}</p>
                 </div>
-                <button class="button"
-                    (click)="addItemToCart(product.name, product.price, product.description, product.image)">Add to
-                    cart</button>
+                <button class="button" (click)="addItemToCart(product.id)">
+                    Add to cart
+                </button>
             </td>
         </tr>
     </table>
 </div>
 
-
 <div *ngIf="showPopup" class="popup-container">
     <div class="popup">
         <div class="popup-content">
-            <h3>Adaugă Produs</h3>
+            <h3>Add New Product</h3>
             <form (submit)="addProduct($event)">
                 <div class="form-group">
-                    <label for="productLink">Link</label>
-                    <input id="productLink" type="url" placeholder="Introdu link-ul" required />
+                    <label for="productImage">Image URL</label>
+                    <input id="productImage" type="url" placeholder="Enter image URL" required />
                 </div>
                 <div class="form-group">
-                    <label for="productName">Nume</label>
-                    <input id="productName" type="text" placeholder="Introdu numele" required />
+                    <label for="productName">Product Name</label>
+                    <input id="productName" type="text" placeholder="Enter product name" required />
                 </div>
                 <div class="form-group">
-                    <label for="productDescription">Descriere</label>
-                    <textarea id="productDescription" rows="3" placeholder="Introdu descrierea" required></textarea>
+                    <label for="productDescription">Description</label>
+                    <textarea id="productDescription" rows="3" placeholder="Enter description" required></textarea>
                 </div>
                 <div class="form-group">
-                    <label for="productPrice">Preț ($)</label>
-                    <input id="productPrice" type="number" step="0.01" placeholder="Introdu prețul" required />
+                    <label for="productPrice">Price ($)</label>
+                    <input id="productPrice" type="number" step="0.01" min="0" placeholder="Enter price" required />
+                </div>
+                <div class="form-group">
+                    <label for="productQuantity">Initial Stock Quantity</label>
+                    <input id="productQuantity" type="number" min="1" value="1" placeholder="Enter quantity" required />
                 </div>
                 <div class="form-buttons">
-                    <button type="submit" class="btn btn-primary">Adaugă</button>
-                    <button type="button" class="btn btn-secondary" (click)="togglePopup()">Anulează</button>
+                    <button type="submit" class="btn btn-primary">Add Product</button>
+                    <button type="button" class="btn btn-secondary" (click)="togglePopup()">Cancel</button>
                 </div>
             </form>
         </div>
