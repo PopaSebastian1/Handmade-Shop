@@ -1,6 +1,8 @@
 package com.example.handmadeshop.controllers;
 
+import com.example.handmadeshop.DTO.AuthResponseDTO;
 import com.example.handmadeshop.DTO.UserDTO;
+import com.example.handmadeshop.service.AuthenticationService;
 import com.example.handmadeshop.service.GoogleAuthService;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
@@ -13,11 +15,14 @@ public class GoogleAuthController {
     @Inject
     private GoogleAuthService googleAuthService;
 
+    @Inject
+    private AuthenticationService authenticationService;
+
     @POST
-    @Path("/google/login")
+    @Path("/google/authenticate")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response loginWithGoogle(GoogleTokenRequest tokenRequest) {
+    public Response authenticateWithGoogle(GoogleTokenRequest tokenRequest) {
         try {
             if (tokenRequest == null || tokenRequest.getIdToken() == null) {
                 return Response.status(Response.Status.BAD_REQUEST)
@@ -26,52 +31,23 @@ public class GoogleAuthController {
             }
 
             String token = tokenRequest.getIdToken();
-            System.out.println("Login: Received token (first 20 chars): " + token.substring(0, 20) + "...");
+            System.out.println("Google Auth: Received token (first 20 chars): " + token.substring(0, 20) + "...");
 
-            UserDTO user = googleAuthService.loginGoogleUser(token);
-            if (user == null) {
-                return Response.status(Response.Status.UNAUTHORIZED)
-                        .entity("User not found. Please register first.")
-                        .build();
-            }
-            return Response.ok(user).build();
-        } catch (Exception e) {
-            e.printStackTrace(); // For debugging
-            return Response.status(Response.Status.UNAUTHORIZED)
-                    .entity("Google login failed: " + e.getMessage())
-                    .build();
-        }
-    }
-
-    @POST
-    @Path("/google/register")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response registerWithGoogle(GoogleTokenRequest tokenRequest) {
-        try {
-            if (tokenRequest == null || tokenRequest.getIdToken() == null) {
-                return Response.status(Response.Status.BAD_REQUEST)
-                        .entity("Missing ID token")
-                        .build();
-            }
-
-            String token = tokenRequest.getIdToken();
-            System.out.println("Register: Received token (first 20 chars): " + token.substring(0, 20) + "...");
-
-            // Check if user already exists
+            // Check if user exists
             UserDTO existingUser = googleAuthService.findGoogleUser(token);
+
             if (existingUser != null) {
-                return Response.status(Response.Status.CONFLICT)
-                        .entity("User already exists. Please login instead.")
-                        .build();
+                String authResponse = authenticationService.authenticate(existingUser.getEmail(), existingUser.getPassword());
+                return Response.ok(authResponse).build();
             }
 
             UserDTO newUser = googleAuthService.registerGoogleUser(token);
-            return Response.ok(newUser).build();
+            String authResponse = authenticationService.authenticate(newUser.getEmail(), newUser.getPassword());
+            return Response.ok(authResponse).build();
         } catch (Exception e) {
             e.printStackTrace(); // For debugging
             return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("Google registration failed: " + e.getMessage())
+                    .entity("Google authentication failed: " + e.getMessage())
                     .build();
         }
     }

@@ -88,35 +88,30 @@ public class GoogleAuthService {
             UserDTO googleUserInfo = verifyGoogleToken(idTokenString);
             logger.info("Creating new user from Google info for email: " + googleUserInfo.getEmail());
 
-            // First check if user already exists
             UserDTO existingUser = userService.findByEmail(googleUserInfo.getEmail());
             if (existingUser != null) {
                 logger.warning("Registration failed - user already exists with email: " + googleUserInfo.getEmail());
-                return existingUser; // Return existing user instead of null
+                return existingUser;
             }
 
-            logger.info("Creating new user with clientId: " + googleUserInfo.getClientId());
 
             UserDTO newUser = new UserDTO();
             newUser.setEmail(googleUserInfo.getEmail());
             newUser.setName(googleUserInfo.getName());
             newUser.setSurname(googleUserInfo.getSurname());
-            newUser.setClientId(googleUserInfo.getClientId()); // Ensure this is set correctly
+            newUser.setClientId(googleUserInfo.getClientId());
             newUser.setPassword(java.util.UUID.randomUUID().toString());
-           // newUser.setRoles(Arrays.asList("viewer"));
 
-            // Debug log to check if clientId is being set properly
-            logger.info("About to create user with clientId: " + newUser.getClientId());
+            newUser.setRoles(java.util.Arrays.asList("viewer"));
+
 
             UserDTO createdUser = userService.createUser(newUser);
             if (createdUser == null) {
-                logger.severe("User creation failed - userService.createUser returned null");
                 throw new Exception("Failed to create user account");
             }
 
             return createdUser;
         } catch (Exception e) {
-            logger.log(Level.SEVERE, "Error in registerGoogleUser", e);
             throw new Exception("Google registration failed: " + e.getMessage(), e);
         }
     }

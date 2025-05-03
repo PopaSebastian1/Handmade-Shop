@@ -2,6 +2,7 @@ package com.example.handmadeshop.controllers;
 
 import com.example.handmadeshop.DTO.ProductDTO;
 import com.example.handmadeshop.DTO.UserDTO;
+import com.example.handmadeshop.Security.Autenticated;
 import com.example.handmadeshop.service.ProductService;
 import com.example.handmadeshop.service.UserService;
 import jakarta.inject.Inject;
@@ -37,8 +38,7 @@ public class ProductController {
         }
     }
 
-    @POST
-    public Response createProduct(ProductDTO productDTO) {
+    @POST public Response createProduct(ProductDTO productDTO) {
         logger.info("Creating product: " + productDTO);
         try {
             ProductDTO createdProduct = productService.createProduct(productDTO);
@@ -141,6 +141,7 @@ public class ProductController {
     }
 
     @GET
+    //@Autenticated
     public Response getAllProducts() {
         logger.info("Fetching all products");
         try {

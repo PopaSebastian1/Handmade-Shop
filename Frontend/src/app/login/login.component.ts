@@ -59,7 +59,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
     const loginSuccess = this.googleAuthService.initializeLoginButton(loginContainer);
 
     const signupContainer = document.getElementById('google-signup-btn-container');
-    const signupSuccess = this.googleAuthService.initializeSignupButton(signupContainer);
+    const signupSuccess = this.googleAuthService.initializeLoginButton(signupContainer);
 
     this.googleButtonRendered = loginSuccess && signupSuccess;
     console.log('Google buttons initialized:', this.googleButtonRendered);
@@ -70,7 +70,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
     if (loginForm && window.getComputedStyle(loginForm).display !== 'none') {
       this.googleAuthService.promptGoogleLogin();
     } else {
-      this.googleAuthService.promptGoogleSignup();
+      this.googleAuthService.promptGoogleLogin();
     }
   }
 
@@ -82,9 +82,11 @@ export class LoginComponent implements OnInit, AfterViewInit {
     const { email, password } = this.loginForm.value;
   
     this.userService.loginUser(email!, password!).subscribe({
-      next: (user: User) => {
-        console.log('User roles after login:', user.roles); // Debugging
-        this.userService.setUserData(user); // salvează tot userul
+      next: (response) => {
+        
+        console.log('Login successful');
+    
+        
         this.router.navigate(['/home']);
       },
       error: (error) => {
@@ -93,7 +95,6 @@ export class LoginComponent implements OnInit, AfterViewInit {
       }
     });
   }
-  
 
   signupUser(user: User) {
     const headers = new HttpHeaders({

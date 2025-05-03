@@ -13,10 +13,13 @@ export class AppComponent {
   showMenu = true; 
 
   constructor(public userService: UserService, private router: Router) {
+    this.userService.restoreSession();
     router.events.subscribe(event => {
       if (event instanceof NavigationStart) {
         if (event.url === '/login' || event.url === '/') {
+          this.userService.logoutUser();
           this.userService.setLoggedIn(false);
+          localStorage.clear();
           this.showMenu = false; 
         } else {
           this.showMenu = true; 

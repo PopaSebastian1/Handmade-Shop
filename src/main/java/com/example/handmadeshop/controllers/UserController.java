@@ -1,9 +1,11 @@
 package com.example.handmadeshop.controllers;
 
+import com.example.handmadeshop.DTO.AuthResponseDTO;
 import com.example.handmadeshop.DTO.ModeMapper;
 import com.example.handmadeshop.DTO.UserDTO;
 import com.example.handmadeshop.EJB.model.User;
 import com.example.handmadeshop.repository.UserRepository;
+import com.example.handmadeshop.service.AuthenticationService;
 import com.example.handmadeshop.service.KmsEncryptionService;
 import com.example.handmadeshop.service.UserService;
 import jakarta.inject.Inject;
@@ -21,6 +23,8 @@ public class UserController {
     private UserService userService;
     @Inject
     private UserRepository userRepository;
+    @Inject
+    private AuthenticationService authenticationService;
 
     @POST
     public Response createUser(UserDTO userDTO) {
@@ -71,16 +75,13 @@ public class UserController {
                     .build();
         }
 
-        // Use a query that fetches user with roles
-        User matchedUser = userRepository.findByEmailWithRoles(email);
+        String authResponse = authenticationService.authenticate(email, password);
 
-        if (matchedUser != null && matchedUser.getPassword().equals(password)) {
-            UserDTO userDTO = ModeMapper.toUserDTO(matchedUser);
-            userDTO.setPassword(null);
-            return Response.ok(userDTO).build();
+        if (authResponse != null) {
+            return Response.ok(authResponse).build();
         }
 
-        return Response.status(Response.Status.NOT_FOUND)
+        return Response.status(Response.Status.UNAUTHORIZED)
                 .entity("{\"error\":\"Invalid email or password\"}")
                 .type(MediaType.APPLICATION_JSON)
                 .build();

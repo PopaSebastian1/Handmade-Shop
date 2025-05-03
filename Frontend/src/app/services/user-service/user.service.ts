@@ -4,6 +4,10 @@ import { environment } from '../google-auth/environment';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { User } from '../../models/user.model';
 import { Router } from '@angular/router';
+import {jwtDecode} from 'jwt-decode';
+import { tap } from 'rxjs/operators';
+import { JwtPayload } from '../../models/JwtPayload';
+import { JwtDecoderService } from '../jwt-decoder/jwt-decoder.service';
 
 @Injectable({
   providedIn: 'root'
@@ -22,20 +26,95 @@ export class UserService {
 
   constructor(
     private http: HttpClient,
-    private router: Router
-  ) { }
+    private router: Router,
+    private jwtDecoder: JwtDecoderService
+  ) {
+    this.restoreSession(); // Verificăm dacă există un token salvat la inițializare
+   }
+
+  decodeJwt(token: string): JwtPayload {
+    try {
+      const decoded = jwtDecode<JwtPayload>(token);
+      console.log('Decoded JWT:', decoded);
+      return decoded;
+    } catch (error) {
+      console.error('Error decoding JWT:', error);
+      throw new Error('Invalid JWT token');
+    }
+  }
+  
+
+  processJwtToken(token: string): void {
+    try {
+      // Decodează și salvează token-ul
+      const payload = this.jwtDecoder.decodeJwt(token);
+      this.jwtDecoder.saveToken(token);
+      
+      // Crează un obiect User din payload și setează utilizatorul curent
+      const user = this.createUserFromPayload(payload);
+      this.currentUserSubject.next(user);
+      this.setUser(user.email);
+    } catch (error) {
+      console.error('Failed to process JWT token:', error);
+    }
+  }
+  
   shouldDisplay(): boolean {
     const route = this.router.url;
     return this.loggedIn.getValue() && !['/login', '/home'].includes(route);
   }
 
-  // User management methods
-
-  logoutUser(): void {
-    this.currentUserSubject.next(null); // Resetează utilizatorul curent
-    this.user.next(''); // Resetează numele utilizatorului
-    this.loggedIn.next(false); // Setează utilizatorul ca delogat
+  restoreSession(): boolean {
+    // Verifică dacă există un token valid
+    const payload = this.jwtDecoder.getPayloadIfValid();
+    
+    if (payload) {
+      // Crează un obiect User din payload și setează utilizatorul curent
+      const user: User = this.createUserFromPayload(payload);
+      this.currentUserSubject.next(user);
+      this.setUser(user.email);
+      return true;
+    }
+    
+    return false;
   }
+
+  
+
+  private createUserFromPayload(payload: JwtPayload): User {
+    return {
+      id: payload.userId,
+      email: payload.sub,
+      surname: payload.name,
+      name: payload.surname,
+      clientId: '',
+      fullName: `${payload.name} ${payload.surname}`,
+      roles: payload.roles,
+      toSafeObject: function() {
+        return {
+          id: this.id,
+          email: this.email,
+          surname: this.surname,
+          name: this.name,
+          fullName: this.fullName,
+          roles: this.roles
+        };
+      }
+    };
+  }
+
+  // User management methods
+ 
+  logoutUser(): void {
+    // Șterge token-ul
+    this.jwtDecoder.removeToken();
+    
+    // Resetează starea utilizatorului
+    this.currentUserSubject.next(null);
+    this.user.next('');
+    this.loggedIn.next(false);
+  }
+
 
   setUser(name: string) {
     this.user.next(name);
@@ -52,13 +131,22 @@ export class UserService {
     this.setUser(user.email);
   }
 
-  loginUser(email: string, password: string): Observable<User> {
+  loginUser(email: string, password: string): Observable<any> {
     const params = new HttpParams()
       .set('email', email)
       .set('password', password);
-
-    return this.http.post<User>(`${this.baseUrl}/users/login`, null, { params });
+  
+    return this.http.post(`${this.baseUrl}/users/login`, null, { 
+      params,
+      responseType: 'text'
+    }).pipe(
+      tap(token => {
+        console.log('Login response received');
+        this.processJwtToken(token);
+      })
+    );
   }
+
 
   signupUser(user: User): Observable<any> {
     const headers = new HttpHeaders({
