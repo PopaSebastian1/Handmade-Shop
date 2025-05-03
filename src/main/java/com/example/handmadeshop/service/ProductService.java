@@ -25,34 +25,28 @@ public class ProductService {
     private UserRepository userRepository;
 
     @Transactional
-    public void updateUserProductAssociation(Integer productId, Integer userId, Integer newQuantity) {
-        // 1. Obținem produsul și asocierea existentă
+    public String updateUserProductAssociation(Integer productId, Integer userId, Integer newQuantity) {
         Product product = productRepository.findById(productId);
         User user = userRepository.findById(userId);
         UserProduct existingAssociation = productRepository.findUserProductAssociation(userId, productId);
 
-        // 2. Verificare specială pentru asocierea seller (-1)
+        // 🔁 Înlocuiește excepția cu return false
         if (existingAssociation != null && existingAssociation.getQuantity() == -1) {
-            throw new IllegalStateException("Cannot modify seller-product association");
+            return "seller"; // indică faptul că e seller
         }
 
-        // 3. Calculăm diferența de cantitate
         int oldQuantity = existingAssociation != null ? existingAssociation.getQuantity() : 0;
         int quantityDifference = newQuantity - oldQuantity;
 
-        // 4. Verificăm stocul pentru cantități pozitive
         if (newQuantity > 0 && product.getQuantity() < quantityDifference) {
-            throw new IllegalArgumentException("Not enough products in stock");
+            return "empty";
         }
 
-        // 5. Actualizăm sau ștergem asocierea
         if (newQuantity == 0) {
-            // Ștergem asocierea dacă cantitatea este 0
             if (existingAssociation != null) {
                 productRepository.deleteUserProduct(existingAssociation);
             }
         } else {
-            // Actualizăm sau creăm asocierea
             if (existingAssociation != null) {
                 existingAssociation.setQuantity(newQuantity);
                 productRepository.updateUserProduct(existingAssociation);
@@ -69,12 +63,14 @@ public class ProductService {
             }
         }
 
-        // 6. Actualizăm stocul produsului
         if (oldQuantity > 0 || newQuantity > 0) {
             product.setQuantity(product.getQuantity() - quantityDifference);
             productRepository.update(product);
         }
+
+        return "";
     }
+
 
     public List<ProductDTO> getProductsWithUserQuantities(Integer userId) {
         List<Object[]> results = productRepository.findProductsWithUserQuantities(userId);

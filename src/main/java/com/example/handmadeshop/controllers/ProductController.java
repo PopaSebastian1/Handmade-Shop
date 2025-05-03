@@ -64,14 +64,12 @@ public class ProductController {
                 userId, productId, quantity));
 
         try {
-            // 1. Verificare specială pentru cantitatea -1 (seller)
             if (quantity == -1) {
                 return Response.status(Response.Status.BAD_REQUEST)
                         .entity("Cannot modify seller-product association directly. Use the seller endpoint.")
                         .build();
             }
 
-            // 2. Verificăm existența produsului și a userului
             ProductDTO product = productService.getProductById(productId);
             UserDTO user = userService.getUserById(userId);
 
@@ -81,13 +79,27 @@ public class ProductController {
                         .build();
             }
 
-            // 3. Procesăm asocierea
-            productService.updateUserProductAssociation(productId, userId, quantity);
+            String success = productService.updateUserProductAssociation(productId, userId, quantity);
+
+            if (success == "empty" ) {
+                return Response.status(Response.Status.OK)
+                        .entity("This product is out of stock")
+                        .build();
+            }
+            else if (success == "seller" ) {
+                return Response.status(Response.Status.OK)
+                        .entity("You can't buy your own product")
+                        .build();
+            }
 
             return Response.status(Response.Status.OK)
-                    .entity("Product association updated successfully")
+                    .entity("")
                     .build();
 
+        } catch (IllegalArgumentException e) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity("Error: " + e.getMessage())
+                    .build();
         } catch (Exception e) {
             logger.severe("Error updating product association: " + e.getMessage());
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
@@ -95,6 +107,7 @@ public class ProductController {
                     .build();
         }
     }
+
 
     @POST
     @Path("/seller/{sellerId}")

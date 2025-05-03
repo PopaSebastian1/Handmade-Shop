@@ -1,3 +1,8 @@
+*{
+  font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif !important;
+  font-size: 20px;
+}
+
 .top-page {
   margin-top: 80px ; 
 }
@@ -119,7 +124,6 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   padding: 20px;
   width: 300px;
-  max-width: 90%;
 }
 
 .popup-content {
@@ -184,4 +188,24 @@
 
 .btn-secondary:hover {
   background-color: #aaa;
+}
+
+.success-message .popup-content {
+  background-color: #dff0d8;
+  color: #3c763d;
+  font-weight: bold;
+  text-align: center;
+}
+
+.success-message .popup-content {
+  background-color: #dff0d8;
+  color: #3c763d;
+}
+
+.center-button {
+  justify-content: center !important;
+}
+
+.ok {
+  border-radius: 50px;
 }

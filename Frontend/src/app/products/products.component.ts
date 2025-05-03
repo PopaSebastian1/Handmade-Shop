@@ -18,10 +18,12 @@ export class ProductsComponent implements OnInit {
   currentUserId: number | null = null;
   private userSubscription: Subscription | null = null;
   productForm: FormGroup;
+  successMessage: string = '';
+  showSuccessPopup: boolean = false;
 
   constructor(
-    private productService: ProductService, 
-    private router: Router, 
+    private productService: ProductService,
+    private router: Router,
     private userService: UserService,
     private fb: FormBuilder
   ) {
@@ -31,7 +33,7 @@ export class ProductsComponent implements OnInit {
       description: ['', Validators.required],
       price: [0, [Validators.required, Validators.min(0)]],
       quantity: [1, [Validators.required, Validators.min(1)]]
-  });
+    });
   }
 
   ngOnInit() {
@@ -75,7 +77,7 @@ export class ProductsComponent implements OnInit {
   togglePopup() {
     this.showPopup = !this.showPopup;
   }
-  
+
   getCartQuantity(productId: number | undefined): number {
     const cartItem = this.cart.find(item => item.id === productId);
     return cartItem ? cartItem.quantity : 0;
@@ -90,30 +92,40 @@ export class ProductsComponent implements OnInit {
       console.error('No user logged in or invalid product');
       return;
     }
-  
+
     const cartProduct = this.cart.find(p => p.id === productId);
     const currentQuantity = cartProduct ? cartProduct.quantity : 0;
     const newQuantity = currentQuantity + 1;
-  
+
     this.productService.associateUserWithProduct(
-      productId, 
-      this.currentUserId, 
+      productId,
+      this.currentUserId,
       newQuantity
     ).subscribe({
       next: (response) => {
-        console.log('Success:', response); // Log the raw response
+        if (typeof response === 'string') {
+          if (response !== '') {
+            this.showTemporarySuccess(response);
+          }
+        }
         this.loadUserCart();
       },
       error: (err) => {
-        //console.error('Error adding to cart:', err);
-        // Handle specific error cases if needed
         if (err.status === 200) {
-          // Sometimes a 200 response can trigger error if parsing fails
-          this.loadUserCart(); // Try refreshing anyway
+          this.loadUserCart();
         }
       }
     });
   }
+
+  showTemporarySuccess(message: string) {
+    this.successMessage = message;
+    this.showSuccessPopup = true;
+  }
+
+  closeSuccessPopup() {
+    this.showSuccessPopup = false;
+  }  
 
   viewProductDetails(image: string) {
     this.router.navigate(['/product-details', image]);
@@ -121,7 +133,7 @@ export class ProductsComponent implements OnInit {
 
   addProduct(event: Event) {
     event.preventDefault();
-    
+
     // Get values using the correct IDs from your template
     const productImage = (document.getElementById('productImage') as HTMLInputElement).value;
     const productName = (document.getElementById('productName') as HTMLInputElement).value;
@@ -131,34 +143,34 @@ export class ProductsComponent implements OnInit {
 
     const currentUser = this.userService.getCurrentUser();
     if (!currentUser?.id) {
-        console.error('No user logged in');
-        return;
+      console.error('No user logged in');
+      return;
     }
 
     // Create new Product with all fields including quantity
     const newProduct = new Product(
-        productName,
-        productPrice,
-        productQuantity, // Use the quantity from form
-        productDescription,
-        0, // Default rating
-        productImage
+      productName,
+      productPrice,
+      productQuantity, // Use the quantity from form
+      productDescription,
+      0, // Default rating
+      productImage
     );
 
     this.productService.addProductForSale(
-        currentUser.id, 
-        newProduct
+      currentUser.id,
+      newProduct
     ).subscribe({
-        next: () => {
-            // Refresh products list
-            this.productService.getAllProducts().subscribe(products => {
-                this.products = products;
-            });
-            this.togglePopup();
-        },
-        error: (err) => {
-            console.error('Error adding product:', err);
-        }
+      next: () => {
+        // Refresh products list
+        this.productService.getAllProducts().subscribe(products => {
+          this.products = products;
+        });
+        this.togglePopup();
+      },
+      error: (err) => {
+        console.error('Error adding product:', err);
+      }
     });
-}
+  }
 }

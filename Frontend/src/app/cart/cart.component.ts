@@ -13,12 +13,14 @@ import { forkJoin } from 'rxjs';
 export class CartComponent implements OnInit {
   cart: Product[] = [];
   currentUserId: number | null = null;
+  successMessage: string = '';
+  showSuccessPopup: boolean = false;
 
   constructor(
     private productService: ProductService,
     private userService: UserService,
     private router: Router
-  ) {}
+  ) { }
 
   ngOnInit() {
     const user = this.userService.getCurrentUser();
@@ -48,7 +50,7 @@ export class CartComponent implements OnInit {
 
   removeItemFromCart(productId: number | undefined) {
     if (!this.currentUserId || productId === undefined) return;
-  
+
     this.productService.associateUserWithProduct(productId, this.currentUserId, 0)
       .subscribe({
         next: () => {
@@ -63,7 +65,7 @@ export class CartComponent implements OnInit {
           }
         }
       });
-  }  
+  }
 
   totalCount() {
     return this.cart.reduce((total, item) => total + (item.quantity || 0), 0);
@@ -75,12 +77,12 @@ export class CartComponent implements OnInit {
 
   clearCart() {
     if (!this.currentUserId) return;
-  
+
     // Remove all items by setting quantity to 0
     const clearOperations = this.cart.map(item =>
       this.productService.associateUserWithProduct(item.id!, this.currentUserId!, 0)
     );
-  
+
     // Execute all operations
     forkJoin(clearOperations).subscribe({
       next: () => {
@@ -95,29 +97,43 @@ export class CartComponent implements OnInit {
         }
       }
     });
-  }  
+  }
 
   increaseCount(product: Product) {
     if (!this.currentUserId || !product.id) return;
-    
+
     const newQuantity = (product.quantity || 0) + 1;
     this.updateProductQuantity(product.id, newQuantity);
   }
 
   decreaseCount(product: Product) {
     if (!this.currentUserId || !product.id) return;
-    
+
     const newQuantity = Math.max(0, (product.quantity || 0) - 1);
     this.updateProductQuantity(product.id, newQuantity);
   }
 
+  showTemporarySuccess(message: string) {
+    this.successMessage = message;
+    this.showSuccessPopup = true;
+  }
+
+  closeSuccessPopup() {
+    this.showSuccessPopup = false;
+  }  
+
   updateProductQuantity(productId: number, quantity: number) {
     this.productService.associateUserWithProduct(
-      productId, 
-      this.currentUserId!, 
+      productId,
+      this.currentUserId!,
       quantity
     ).subscribe({
-      next: () => {
+      next: (response) => {
+        if (typeof response === 'string') {
+          if (response !== '') {
+            this.showTemporarySuccess(response);
+          }
+        }
         this.loadCart(); // Success path
       },
       error: (err) => {
@@ -130,7 +146,7 @@ export class CartComponent implements OnInit {
         }
       }
     });
-  }  
+  }
 
   navigateToProducts() {
     this.router.navigate(['/products']);
