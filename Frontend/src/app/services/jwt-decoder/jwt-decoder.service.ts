@@ -10,16 +10,12 @@ export class JwtDecoderService {
   
   constructor() { }
 
-  /**
-   * Decodifică un token JWT
-   */
+
   decodeJwt(token: string): JwtPayload {
     try {
       const decoded = jwtDecode<JwtPayload>(token);
-      console.log('Decoded JWT:', decoded);
       return decoded;
     } catch (error) {
-      console.error('Error decoding JWT:', error);
       throw new Error('Invalid JWT token');
     }
   }

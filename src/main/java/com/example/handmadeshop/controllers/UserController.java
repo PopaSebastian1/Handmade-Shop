@@ -93,13 +93,9 @@ public class UserController {
             @PathParam("userId") Integer userId,
             List<String> roleNames
     ) {
-        try {
-            UserDTO updatedUser = userService.updateUserRoles(userId, roleNames);
-            return Response.ok(updatedUser).build();
-        } catch (Exception e) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("Error updating roles: " + e.getMessage())
-                    .build();
-        }
+        UserDTO updated = userService.updateUserRoles(userId, roleNames);
+        String newToken = authenticationService.authenticate(updated.getEmail(), updated.getPassword());
+
+        return Response.ok(newToken).build();
     }
 }
