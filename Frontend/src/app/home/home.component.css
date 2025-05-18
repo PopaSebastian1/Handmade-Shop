@@ -114,7 +114,7 @@ body {
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: center;
-  background: rgba(209, 152, 200, 0.555);
+  background: rgba(209, 152, 200, 0);
   background-size: cover;
   overflow-x: hidden;
   height: -webkit-fill-available;

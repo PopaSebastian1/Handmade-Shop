@@ -12,8 +12,8 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
   styleUrls: ['./products.component.css']
 })
 export class ProductsComponent implements OnInit {
-  products: Product[] = []; // All products
-  cart: Product[] = []; // User's cart products with quantities
+  products: Product[] = [];
+  cart: Product[] = [];
   showPopup = false;
   currentUserId: number | null = null;
   private userSubscription: Subscription | null = null;
@@ -28,21 +28,39 @@ export class ProductsComponent implements OnInit {
     private fb: FormBuilder
   ) {
     this.productForm = this.fb.group({
-      image: ['', Validators.required],
-      name: ['', Validators.required],
-      description: ['', Validators.required],
-      price: [0, [Validators.required, Validators.min(0)]],
-      quantity: [1, [Validators.required, Validators.min(1)]]
+      image: ['', [
+        Validators.required, 
+        Validators.pattern(/^(http(s)?:\/\/)?([\w-]+\.)+[\w-]+(\/[\w- ;,./?%&=]*)?$/)
+      ]],
+      name: ['', [
+        Validators.required,
+        Validators.minLength(3),
+        Validators.maxLength(50)
+      ]],
+      description: ['', [
+        Validators.required,
+        Validators.minLength(10),
+        Validators.maxLength(500)
+      ]],
+      price: [0, [
+        Validators.required,
+        Validators.min(0.01),
+        Validators.max(10000)
+      ]],
+      quantity: [1, [
+        Validators.required,
+        Validators.min(1),
+        Validators.max(1000),
+        Validators.pattern(/^[0-9]*$/)
+      ]]
     });
   }
 
   ngOnInit() {
-    // Load all products
     this.productService.getAllProducts().subscribe(products => {
       this.products = products;
     });
 
-    // Subscribe to current user changes
     this.userSubscription = this.userService.currentUserData.subscribe(user => {
       if (user && user.id) {
         this.currentUserId = user.id;
@@ -76,6 +94,12 @@ export class ProductsComponent implements OnInit {
 
   togglePopup() {
     this.showPopup = !this.showPopup;
+    if (!this.showPopup) {
+      this.productForm.reset({
+        price: 0,
+        quantity: 1
+      });
+    }
   }
 
   getCartQuantity(productId: number | undefined): number {
@@ -121,25 +145,26 @@ export class ProductsComponent implements OnInit {
   showTemporarySuccess(message: string) {
     this.successMessage = message;
     this.showSuccessPopup = true;
+    setTimeout(() => {
+      this.closeSuccessPopup();
+    }, 3000);
   }
 
   closeSuccessPopup() {
     this.showSuccessPopup = false;
-  }  
+  }
 
   viewProductDetails(image: string) {
     this.router.navigate(['/product-details', image]);
   }
 
-  addProduct(event: Event) {
-    event.preventDefault();
+  addProduct(): void {
+    if (this.productForm.invalid) {
+      this.productForm.markAllAsTouched();
+      return;
+    }
 
-    // Get values using the correct IDs from your template
-    const productImage = (document.getElementById('productImage') as HTMLInputElement).value;
-    const productName = (document.getElementById('productName') as HTMLInputElement).value;
-    const productDescription = (document.getElementById('productDescription') as HTMLTextAreaElement).value;
-    const productPrice = parseFloat((document.getElementById('productPrice') as HTMLInputElement).value);
-    const productQuantity = parseInt((document.getElementById('productQuantity') as HTMLInputElement).value);
+    const { image, name, description, price, quantity } = this.productForm.value;
 
     const currentUser = this.userService.getCurrentUser();
     if (!currentUser?.id) {
@@ -147,29 +172,26 @@ export class ProductsComponent implements OnInit {
       return;
     }
 
-    // Create new Product with all fields including quantity
     const newProduct = new Product(
-      productName,
-      productPrice,
-      productQuantity, // Use the quantity from form
-      productDescription,
-      0, // Default rating
-      productImage
+      name,
+      price,
+      quantity,
+      description,
+      0,
+      image
     );
 
-    this.productService.addProductForSale(
-      currentUser.id,
-      newProduct
-    ).subscribe({
+    this.productService.addProductForSale(currentUser.id, newProduct).subscribe({
       next: () => {
-        // Refresh products list
         this.productService.getAllProducts().subscribe(products => {
           this.products = products;
         });
         this.togglePopup();
+        this.showTemporarySuccess('Product added successfully!');
       },
       error: (err) => {
         console.error('Error adding product:', err);
+        this.showTemporarySuccess('Error adding product. Please try again.');
       }
     });
   }

@@ -1,11 +1,11 @@
-/* Stiluri pentru bara de meniu */
+/* menu.component.css */
 .menu {
   background-color: rgb(156, 49, 147);
   display: flex;
   align-items: center;
   padding: 0 20px;
   height: 60px;
-  position: fixed; /* Schimbă din absolute în fixed */
+  position: fixed;
   top: 0;
   left: 0;
   right: 0;
@@ -50,11 +50,10 @@ nav {
   margin-left: 20px;
 }
 
-.menu-logo.right{
+.menu-logo.right {
   width: 40px;
 }
 
-/* Stiluri îmbunătățite pentru popup */
 .popup-container {
   position: fixed;
   top: 0;
@@ -103,7 +102,8 @@ nav {
 }
 
 .form-group {
-  margin-bottom: 20px;
+  margin-bottom: 35px;
+  position: relative;
 }
 
 .form-group label {
@@ -126,6 +126,28 @@ nav {
   border-color: rgb(156, 49, 147);
   outline: none;
   box-shadow: 0 0 0 2px rgba(156, 49, 147, 0.2);
+}
+
+input.ng-invalid.ng-touched {
+  border-color: #9c3193 !important;
+  box-shadow: 0 0 0 2px rgba(156, 49, 147, 0.1);
+}
+
+.validation-error {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: 4px;
+  color: #9c3193 !important;
+  font-size: 12px !important;
+  line-height: 1.2;
+  animation: fadeIn 0.3s ease;
+}
+
+.validation-error div {
+  padding-left: 0;
+  margin: 2px 0;
 }
 
 .roles-section {
@@ -195,6 +217,11 @@ nav {
   transform: translateY(-1px);
 }
 
+.btn-save:disabled {
+  background-color: #d0a0cc;
+  cursor: not-allowed;
+}
+
 .btn-secondary {
   background-color: #f5f5f5;
   color: #333;
@@ -203,10 +230,8 @@ nav {
 
 .btn-secondary:hover {
   background-color: #e9e9e9;
-  transform: translateY(-1px);
 }
 
-/* Animations */
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
@@ -223,7 +248,6 @@ nav {
   }
 }
 
-/* Responsive */
 @media (max-width: 768px) {
   .popup {
     padding: 20px;
@@ -244,14 +268,8 @@ nav {
   }
 }
 
-/* Error styles */
-input.ng-invalid.ng-touched {
-  border: 1px solid #e74c3c;
-}
-
-.error {
-  color: #e74c3c;
-  font-size: 0.8em;
-  margin-top: 5px;
-  font-weight: 400;
+.btn-save:disabled {
+  background-color: #d0a0cc;
+  cursor: not-allowed;
+  transform: none !important;
 }

@@ -8,7 +8,6 @@
 }
 
 body {
-  min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -17,6 +16,7 @@ body {
 }
 
 .container {
+  height: fit-content;
   position: relative;
   max-width: 850px;
   width: 100%;
@@ -414,4 +414,80 @@ body {
   color: #4285F4;
   background: white;
   border-radius: 50%;
+}
+
+/* Validation styles */
+.invalid-input {
+  border-color: #9c3193 !important;
+}
+
+.validation-error {
+  color: #9c3193;
+  font-size: 0.8rem;
+  margin-top: 0.25rem;
+  text-align: left;
+  width: 100%;
+}
+
+.validation-error div {
+  margin-bottom: 0.25rem;
+}
+
+.form-group {
+  margin-bottom: 1rem;
+  width: 100%;
+}
+
+/* Adjust the input boxes to match the style
+.input-box input.invalid-input {
+  border: 1px solid #9c3193;
+  background-color: rgba(220, 53, 69, 0.1);
+} */
+
+/* Add these styles to your existing CSS */
+
+/* Form group container with relative positioning */
+.form-group {
+  position: relative;
+  margin-bottom: 1.5rem; /* Adjust this as needed */
+  width: 100%;
+}
+
+/* Validation messages - absolute positioning */
+.validation-error {
+  position: absolute;
+  bottom: -1.25rem; /* Position below the input */
+  left: 0;
+  color: #9c3193;
+  font-size: 0.75rem;
+  width: 100%;
+  line-height: 1.2;
+}
+
+/* Adjust input box height and margin */
+.input-box {
+  height: 50px; /* Fixed height */
+  margin: 0 0 0.5rem 0; /* Reduced bottom margin */
+}
+
+/* Adjust the form content spacing */
+.form-content .input-boxes {
+  margin-top: 20px; /* Reduced from 30px */
+}
+
+/* Make sure the signup button has consistent spacing */
+.signup-form .button {
+  margin-top: 30px; /* Adjust as needed */
+}
+
+/* Adjust the sign-up text margin */
+.sign-up-text {
+  margin-top: 20px !important; /* Reduced from 25px */
+}
+
+/* Ensure the form content doesn't grow */
+.form-content {
+  min-height: 500px; /* Set a minimum height that fits your content */
+  height: auto;
+  overflow: visible;
 }

@@ -1,5 +1,5 @@
 <div class="app-container">
-  <div class="fixed-menu">
+  <div class="fixed-menu" *ngIf="hasAnyRole()">
     <app-menu></app-menu>
   </div>
   <div class="main-content">

@@ -1,4 +1,4 @@
-*{
+* {
   font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif !important;
   font-size: 20px;
 }
@@ -51,7 +51,7 @@
 .card {
   flex: 0 0 calc(33.333% - 20px);
   margin: 10px;
-  background: #f494e285;
+  background: #ce99d7a5;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
 }
 
@@ -123,7 +123,8 @@
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   padding: 20px;
-  width: 300px;
+  width: 400px;
+  max-width: 90%;
 }
 
 .popup-content {
@@ -131,8 +132,30 @@
 }
 
 .popup-content h3 {
-  margin-bottom: 20px;
+  margin-bottom: 25px;
   color: #9c3193;
+  font-size: 24px !important; /* Mărime crescută */
+  font-weight: 600; /* Grosime font */
+  letter-spacing: 0.5px; /* Spațiere între litere */
+  text-transform: uppercase; /* Litere mari */
+  position: relative;
+  padding-bottom: 10px; /* Spațiu pentru border */
+}
+
+.popup-content h3::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 2px;
+  background-color: #9c3193; /* Linie decorativă sub titlu */
+}
+
+/* Opțional - Efect de umbră */
+.popup-content h3 {
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .form-group {
@@ -145,24 +168,41 @@
   font-size: 14px;
   margin-bottom: 5px;
   color: #333;
+  font-weight: bold;
 }
 
 .form-group input,
 .form-group textarea {
   width: 100%;
-  padding: 8px;
+  padding: 10px;
   border: 1px solid #ccc;
   border-radius: 5px;
   font-size: 14px;
 }
 
 .form-group textarea {
-  resize: none;
+  resize: vertical;
+  min-height: 80px;
+}
+
+.invalid-input {
+  border-color: #ff3860 !important;
+}
+
+.validation-error {
+  color: #ff3860;
+  font-size: 12px;
+  margin-top: 5px;
+}
+
+.validation-error div {
+  margin: 3px 0;
 }
 
 .form-buttons {
   display: flex;
   justify-content: space-between;
+  margin-top: 20px;
 }
 
 .btn {
@@ -170,6 +210,8 @@
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  font-size: 16px;
+  transition: all 0.3s ease;
 }
 
 .btn-primary {
@@ -181,13 +223,18 @@
   background-color: #7a246f;
 }
 
+.btn-primary:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
 .btn-secondary {
-  background-color: #ccc;
+  background-color: #f1f1f1;
   color: #333;
 }
 
 .btn-secondary:hover {
-  background-color: #aaa;
+  background-color: #e0e0e0;
 }
 
 .success-message .popup-content {
@@ -197,15 +244,115 @@
   text-align: center;
 }
 
-.success-message .popup-content {
-  background-color: #dff0d8;
-  color: #3c763d;
-}
-
 .center-button {
   justify-content: center !important;
 }
 
 .ok {
   border-radius: 50px;
+  width: 100px;
+}
+
+.form-row {
+  display: flex;
+  gap: 15px;
+}
+
+.half-width {
+  flex: 1;
+}
+
+/* Adăugăm următoarele stiluri la CSS-ul existent */
+
+.form-group {
+  position: relative;
+  margin-bottom: 35px; /* Spațiu crescut pentru erori */
+}
+
+.validation-error div {
+  position: relative;
+  padding-left: 18px;
+  margin: 3px 0;
+}
+
+.invalid-input {
+  border-color: #9c3193 !important;
+  box-shadow: 0 0 0 2px rgba(156, 49, 147, 0.1);
+  transition: all 0.3s ease;
+}
+
+.popup {
+  width: 450px; /* Lățime crescută pentru lizibilitate */
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Îmbunătățiri vizuale pentru consistență */
+.btn-primary:disabled {
+  background-color: #d0a0cc;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: 2px solid #9c3193;
+  outline-offset: 2px;
+}
+
+/* Opțional - reducere spațiu între linii dacă este necesar */
+.validation-error div {
+  margin: 2px 0; /* Redus de la 3px */
+}
+
+.validation-error {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: 4px;
+  color: #9c3193 !important;
+  font-size: 10px !important;
+  line-height: 1.2;
+  animation: fadeIn 0.3s ease;
+}
+
+.validation-error div {
+  position: relative;
+  padding-left: 18px;
+  margin: 2px 0;
+}
+
+.validation-error div::before {
+  position: absolute;
+  left: 0;
+  color: #9c3193;
+  font-size: 8px !important;
+  top: 1px;
+}
+
+/* Corectăm conflictul de specificitate */
+.validation-error,
+.validation-error * {
+  font-size: 14px !important;
+  color: #9c3193 !important;
+  line-height: 1.2;
+}
+
+.validation-error {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: 4px;
+  color: #9c3193 !important;
+  font-size: 14px !important;
+  line-height: 1.2;
+  animation: fadeIn 0.3s ease;
+}
+
+.validation-error div {
+  margin: 2px 0;
+  padding-left: 0 !important; /* Asigură eliminarea spațiului rezervat pentru punct */
 }

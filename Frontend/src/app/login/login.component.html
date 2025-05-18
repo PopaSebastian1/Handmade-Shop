@@ -1,17 +1,18 @@
-<!DOCTYPE html>
-<html lang="en" dir="ltr">
-  <head>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" href="./login.component.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   </head>
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="./login.component.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
 <body>
   <div class="container">
     <input type="checkbox" id="flip">
     <div class="cover">
       <div class="front">
-        <img src="https://img.freepik.com/free-photo/close-up-hand-making-heart-garland-with-spool-wrapped-gift-box-white-desk_23-2148137405.jpg" alt="">
+        <img
+          src="https://img.freepik.com/free-photo/close-up-hand-making-heart-garland-with-spool-wrapped-gift-box-white-desk_23-2148137405.jpg"
+          alt="">
         <div class="text">
           <span class="text-1">„The only way to do great work<br> is to love what you do.”</span>
           <span class="text-2">Steve Jobs</span>
@@ -55,24 +56,73 @@
           <div class="title">Signup</div>
           <form [formGroup]="signupForm" (ngSubmit)="onSignup($event)">
             <div class="input-boxes">
-              <div class="input-box">
-                <i class="fas fa-user"></i>
-                <input formControlName="name" type="text" placeholder="Enter your name" required>
+              <div class="form-group">
+                <div class="input-box">
+                  <i class="fas fa-user"></i>
+                  <input formControlName="name" type="text" placeholder="Enter your name"
+                    [ngClass]="{'invalid-input': signupForm.get('name')?.invalid && signupForm.get('name')?.touched}">
+                </div>
+                <div *ngIf="signupForm.get('name')?.invalid && signupForm.get('name')?.touched"
+                  class="validation-error">
+                  <div *ngIf="signupForm.get('name')?.errors?.['required']">• Name is required</div>
+                  <div *ngIf="signupForm.get('name')?.errors?.['minlength']">• Name must be at least 3 characters</div>
+                  <div *ngIf="signupForm.get('name')?.errors?.['maxlength']">• Name cannot exceed 50 characters</div>
+                </div>
               </div>
-              <div class="input-box">
-                <i class="fas fa-user"></i>
-                <input formControlName="surename" type="text" placeholder="Enter your surename" required>
+
+              <div class="form-group">
+                <div class="input-box">
+                  <i class="fas fa-user"></i>
+                  <input formControlName="surename" type="text" placeholder="Enter your surename"
+                    [ngClass]="{'invalid-input': signupForm.get('surename')?.invalid && signupForm.get('surename')?.touched}">
+                </div>
+                <div *ngIf="signupForm.get('surename')?.invalid && signupForm.get('surename')?.touched"
+                  class="validation-error">
+                  <div *ngIf="signupForm.get('surename')?.errors?.['required']">• Surename is required</div>
+                  <div *ngIf="signupForm.get('surename')?.errors?.['minlength']">• Surename must be at least 3
+                    characters</div>
+                  <div *ngIf="signupForm.get('surename')?.errors?.['maxlength']">• Surename cannot exceed 50 characters
+                  </div>
+                </div>
               </div>
-              <div class="input-box">
-                <i class="fas fa-envelope"></i>
-                <input formControlName="email" type="text" placeholder="Enter your email" required>
+
+              <div class="form-group">
+                <div class="input-box">
+                  <i class="fas fa-envelope"></i>
+                  <input formControlName="email" type="email" placeholder="Enter your email"
+                    [ngClass]="{'invalid-input': signupForm.get('email')?.invalid && signupForm.get('email')?.touched}">
+                </div>
+                <div *ngIf="signupForm.get('email')?.invalid && signupForm.get('email')?.touched"
+                  class="validation-error">
+                  <div *ngIf="signupForm.get('email')?.errors?.['required']">• Email is required</div>
+                  <div *ngIf="signupForm.get('email')?.errors?.['email']">• Please enter a valid email</div>
+                </div>
               </div>
-              <div class="input-box">
-                <i class="fas fa-lock"></i>
-                <input formControlName="password" type="password" placeholder="Enter your password" required>
+
+              <div class="form-group">
+                <div class="input-box">
+                  <i class="fas fa-lock"></i>
+                  <input formControlName="password" type="password" placeholder="Enter your password"
+                    [ngClass]="{'invalid-input': signupForm.get('password')?.invalid && signupForm.get('password')?.touched}">
+                </div>
+                <div *ngIf="signupForm.get('password')?.invalid && signupForm.get('password')?.touched"
+                  class="validation-error">
+                  <div *ngIf="signupForm.get('password')?.errors?.['required']">• Password is required</div>
+                  <div
+                    *ngIf="!signupForm.get('password')?.errors?.['required'] && signupForm.get('password')?.errors?.['minlength']">
+                    • Password must be at least 8 characters</div>
+                  <div *ngIf="!signupForm.get('password')?.errors?.['required'] && 
+                !signupForm.get('password')?.errors?.['minlength'] && 
+                signupForm.get('password')?.errors?.['maxlength']">• Password cannot exceed 50 characters</div>
+                  <div *ngIf="!signupForm.get('password')?.errors?.['required'] && 
+                !signupForm.get('password')?.errors?.['minlength'] && 
+                !signupForm.get('password')?.errors?.['maxlength'] && 
+                signupForm.get('password')?.errors?.['pattern']">• Use one uppercase, one
+                    lowercase, and one number</div>
+                </div>
               </div>
               <div class="button input-box">
-                <input type="submit" value="Signup">
+                <input type="submit" value="Signup" [disabled]="signupForm.invalid">
               </div>
               <div class="text sign-up-text">Already have an account? <label for="flip">Login now</label></div>
             </div>
@@ -99,9 +149,8 @@
   <div class="popup">
     <div class="popup-content">
       <h3>Login Failed</h3>
-      <p>Incorrect username or password. Please try again.</p>
+      <p>{{popupMessage}}</p>
       <button class="btn btn-secondary" (click)="togglePopup()">Close</button>
     </div>
   </div>
 </div>
-</html>

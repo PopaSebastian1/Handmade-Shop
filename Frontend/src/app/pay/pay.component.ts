@@ -1,51 +1,79 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { DataService } from '../data.service';
 import { Subscription } from 'rxjs';
-
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-pay',
   templateUrl: './pay.component.html',
-  styleUrl: './pay.component.css'
+  styleUrls: ['./pay.component.css']
 })
-export class PayComponent {
+export class PayComponent implements OnInit, OnDestroy {
   cart: any[] = [];
   cartSubscription: Subscription = new Subscription();
-  nume: string ='';
+  nume: string = '';
+  isProcessing: boolean = false;
   
-  constructor(private dataService: DataService, private router: Router)
-  {
-    this.nume = '';
-  } 
+  constructor(
+    private dataService: DataService, 
+    private router: Router,
+    private snackBar: MatSnackBar
+  ) {}
   
   ngOnInit() {
-    this.cartSubscription = this.dataService.getCart(this.nume).subscribe(cart => {
-    this.cart = cart;
+  }
+
+  ngOnDestroy() {
+    this.cartSubscription.unsubscribe();
+  }
+
+  async onSubmit() {
+    if (this.isProcessing) return;
+    
+    this.isProcessing = true;
+    try {
+      await this.clearCart();
+      this.showSuccess('Payment processed successfully!');
+      this.router.navigate(['/home']);
+    } catch (error) {
+      console.error('Payment error:', error);
+      this.showError('Payment processing failed');
+    } finally {
+      this.isProcessing = false;
+    }
+  }
+
+  private async clearCart(): Promise<void> {
+    if (!this.cart.length) return;
+    
+    const clearPromises = this.cart.map(item => 
+      this.dataService.decreaseCount(item).toPromise()
+        .then(() => {
+          item.count--;
+          return item;
+        })
+        .catch(error => {
+          console.error(`Error decreasing count for item ${item.id}:`, error);
+          throw error;
+        })
+    );
+
+    await Promise.all(clearPromises);
+    this.cart = []; // Clear local cart after successful API calls
+  }
+
+  private showSuccess(message: string): void {
+    this.snackBar.open(message, 'Close', {
+      duration: 3000,
+      panelClass: ['success-snackbar']
     });
   }
 
-  onSubmit() {
-    this.clearCart();
-    this.router.navigate(['/home']);
-  }
-
-  async clearCart() {
-    for (const item of this.cart) {
-      while(item.count >= 0) {
-        await this.decreaseCount(item);
-      }
-    }
-  }
-
-  async decreaseCount(item: any) {
-    await this.dataService.decreaseCount(item).toPromise();
-    item.count--;
-    if(item.count == 0) {
-      const cart = await this.dataService.getCart(this.nume).toPromise();
-      if (cart) {
-        this.cart = cart;
-      }
-    }
+  private showError(message: string): void {
+    this.snackBar.open(message, 'Close', {
+      duration: 3000,
+      panelClass: ['error-snackbar']
+    });
   }
 }

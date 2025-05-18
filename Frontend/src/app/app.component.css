@@ -1,17 +1,21 @@
+.app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: rgba(209, 152, 200, 0.555);
+}
+
 .fixed-menu {
-    position: fixed;
-    top: 0;
-    width: 100%;
-    z-index: 1000;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  background-color: #fff; /* Poți ajusta culoarea meniului */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .main-content {
-    background-color: rgba(209, 152, 201, 0.466);
-    height: -webkit-fill-available;
-    overflow-y: auto;
-}
-
-.app-container {
-    overflow-y: auto;
-    height: -webkit-fill-available;
+  flex: 1;
+  overflow-y: auto;
 }
