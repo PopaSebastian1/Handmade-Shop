@@ -4,6 +4,7 @@ import com.example.handmadeshop.DTO.AuthResponseDTO;
 import com.example.handmadeshop.DTO.ModeMapper;
 import com.example.handmadeshop.DTO.UserDTO;
 import com.example.handmadeshop.EJB.model.User;
+import com.example.handmadeshop.Security.Autenticated;
 import com.example.handmadeshop.repository.UserRepository;
 import com.example.handmadeshop.service.AuthenticationService;
 import com.example.handmadeshop.service.KmsEncryptionService;
@@ -34,6 +35,7 @@ public class UserController {
 
     @GET
     @Path("/{id}")
+    @Autenticated
     public Response getUserById(@PathParam("id") Integer id) {
         UserDTO user = userService.getUserById(id);
         if (user != null) {
@@ -43,12 +45,14 @@ public class UserController {
     }
 
     @GET
+    @Autenticated
     public Response getAllUsers() {
         return Response.ok(userService.getAllUsers()).build();
     }
 
     @PUT
     @Path("/{id}")
+    @Autenticated
     public Response updateUser(@PathParam("id") Integer id, UserDTO userDTO) {
         UserDTO updatedUser = userService.updateUser(id, userDTO);
         if (updatedUser != null) {
@@ -59,6 +63,7 @@ public class UserController {
 
     @DELETE
     @Path("/{id}")
+    @Autenticated
     public Response deleteUser(@PathParam("id") Integer id) {
         userService.deleteUser(id);
         return Response.noContent().build();
@@ -89,6 +94,7 @@ public class UserController {
 
     @PUT
     @Path("/{userId}/roles")
+    @Autenticated
     public Response updateUserRoles(
             @PathParam("userId") Integer userId,
             List<String> roleNames

@@ -1,6 +1,7 @@
 package com.example.handmadeshop.controllers;
 
 import com.example.handmadeshop.DTO.RoleDTO;
+import com.example.handmadeshop.Security.Autenticated;
 import com.example.handmadeshop.service.RoleService;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
@@ -16,6 +17,7 @@ public class RoleController {
     private RoleService roleService;
 
     @POST
+    @Autenticated
     public Response createRole(RoleDTO roleDTO) {
         try {
             RoleDTO createdRole = roleService.createRole(roleDTO);
@@ -33,6 +35,7 @@ public class RoleController {
 
     @GET
     @Path("/{id}")
+    @Autenticated
     public Response getRoleById(@PathParam("id") Integer id) {
         RoleDTO role = roleService.getRoleById(id);
         if (role != null) {
@@ -45,6 +48,7 @@ public class RoleController {
     }
 
     @GET
+    @Autenticated
     public Response getAllRoles() {
         return Response
                 .ok(roleService.getAllRoles())
@@ -53,6 +57,7 @@ public class RoleController {
 
     @PUT
     @Path("/{id}")
+    @Autenticated
     public Response updateRole(@PathParam("id") Integer id, RoleDTO roleDTO) {
         try {
             roleDTO.setId(id);

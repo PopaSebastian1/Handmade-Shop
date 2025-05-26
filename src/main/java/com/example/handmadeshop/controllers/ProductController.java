@@ -3,12 +3,15 @@ package com.example.handmadeshop.controllers;
 import com.example.handmadeshop.DTO.ProductDTO;
 import com.example.handmadeshop.DTO.UserDTO;
 import com.example.handmadeshop.Security.Autenticated;
+import com.example.handmadeshop.Security.RoleRequired;
 import com.example.handmadeshop.service.ProductService;
 import com.example.handmadeshop.service.UserService;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import org.checkerframework.checker.units.qual.A;
+
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -24,6 +27,7 @@ public class ProductController {
     private UserService userService;
 
     @GET
+    @Autenticated
     @Path("/user/{userId}")
     public Response getProductsWithUserQuantities(@PathParam("userId") int userId) {
         logger.info("Fetching products with user quantities for user ID: " + userId);
@@ -37,24 +41,10 @@ public class ProductController {
                     .build();
         }
     }
-
-    @POST public Response createProduct(ProductDTO productDTO) {
-        logger.info("Creating product: " + productDTO);
-        try {
-            ProductDTO createdProduct = productService.createProduct(productDTO);
-            return Response.status(Response.Status.CREATED)
-                    .entity(createdProduct)
-                    .build();
-        } catch (Exception e) {
-            logger.severe("Error creating product: " + e.getMessage());
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity("Error creating product")
-                    .build();
-        }
-    }
-
     @POST
     @Path("/{productId}/user/{userId}")
+    @Autenticated
+    @RoleRequired({"buyer", "seller"})
     public Response associateUserWithProduct(
             @PathParam("productId") int productId,
             @PathParam("userId") int userId,
@@ -64,14 +54,12 @@ public class ProductController {
                 userId, productId, quantity));
 
         try {
-            // 1. Verificare specială pentru cantitatea -1 (seller)
             if (quantity == -1) {
                 return Response.status(Response.Status.BAD_REQUEST)
                         .entity("Cannot modify seller-product association directly. Use the seller endpoint.")
                         .build();
             }
 
-            // 2. Verificăm existența produsului și a userului
             ProductDTO product = productService.getProductById(productId);
             UserDTO user = userService.getUserById(userId);
 
@@ -81,7 +69,6 @@ public class ProductController {
                         .build();
             }
 
-            // 3. Procesăm asocierea
             productService.updateUserProductAssociation(productId, userId, quantity);
 
             return Response.status(Response.Status.OK)
@@ -97,14 +84,33 @@ public class ProductController {
     }
 
     @POST
+    @Autenticated
+    @RoleRequired("seller")
+    public Response createProduct(ProductDTO productDTO) {
+        logger.info("Creating product: " + productDTO);
+        try {
+            ProductDTO createdProduct = productService.createProduct(productDTO);
+            return Response.status(Response.Status.CREATED)
+                    .entity(createdProduct)
+                    .build();
+        } catch (Exception e) {
+            logger.severe("Error creating product: " + e.getMessage());
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("Error creating product")
+                    .build();
+        }
+    }
+
+    @POST
     @Path("/seller/{sellerId}")
+    @Autenticated
+    @RoleRequired("seller")
     public Response addProductForSale(
             @PathParam("sellerId") int sellerId,
             ProductDTO productDTO) {
         logger.info("Seller " + sellerId + " is adding product for sale: " + productDTO);
 
         try {
-            // 1. Verificăm dacă produsul există deja pentru acest seller
             boolean productExists = productService.checkExistingProductForSeller(
                     sellerId,
                     productDTO.getName(),
@@ -118,15 +124,12 @@ public class ProductController {
                         .build();
             }
 
-            // 2. Cream produsul cu cantitatea reală
             ProductDTO createdProduct = productService.createProduct(productDTO);
 
-            // 3. Verificăm dacă produsul a fost creat cu succes și are ID
             if (createdProduct == null || createdProduct.getId() == null) {
                 throw new IllegalArgumentException("Failed to create product or product ID is null");
             }
 
-            // 4. Asociem produsul cu seller-ul cu quantity = -1
             productService.addUserToProduct(createdProduct.getId(), sellerId, -1);
 
             return Response.status(Response.Status.CREATED)
@@ -141,7 +144,8 @@ public class ProductController {
     }
 
     @GET
-    //@Autenticated
+    @Autenticated
+    @RoleRequired("buyer")
     public Response getAllProducts() {
         logger.info("Fetching all products");
         try {
@@ -157,6 +161,7 @@ public class ProductController {
 
     @GET
     @Path("/{id}")
+    @Autenticated
     public Response getProductById(@PathParam("id") int id) {
         logger.info("Fetching product with ID: " + id);
         try {
@@ -178,6 +183,8 @@ public class ProductController {
 
     @PUT
     @Path("/{id}")
+    @Autenticated
+    @RoleRequired("seller")
     public Response updateProduct(@PathParam("id") int id, ProductDTO productDTO) {
         logger.info("Updating product with ID: " + id);
         try {
@@ -200,6 +207,8 @@ public class ProductController {
 
     @DELETE
     @Path("/{id}")
+    @Autenticated
+    @RoleRequired("seller")
     public Response deleteProduct(@PathParam("id") int id) {
         logger.info("Deleting product with ID: " + id);
         try {
@@ -215,6 +224,8 @@ public class ProductController {
 
     @POST
     @Path("/{productId}/users/{userId}")
+    @Autenticated
+    @RoleRequired({"buyer", "seller"})
     public Response addUserToProduct(
             @PathParam("productId") int productId,
             @PathParam("userId") int userId,

@@ -59,4 +59,29 @@ public class JwtUtil {
         }
         return null;
     }
+    public Claims getClaims(String token) {
+        try {
+            return validateToken(token);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+    public boolean hasRole(String token, String requiredRole) {
+        try {
+            Claims claims = validateToken(token);
+            if (claims == null) return false;
+
+            @SuppressWarnings("unchecked")
+            List<String> roles = claims.get("roles", List.class);
+
+            // Debug logging
+            System.out.println("Required role: " + requiredRole);
+            System.out.println("User roles: " + roles);
+
+            return roles != null && roles.contains(requiredRole);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }

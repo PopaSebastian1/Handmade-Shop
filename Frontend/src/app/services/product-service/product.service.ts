@@ -40,6 +40,7 @@ export class ProductService {
 
   // New method for seller to add product for sale
   addProductForSale(sellerId: number, product: Product): Observable<Product> {
+    console.log(product);
     return this.http.post<Product>(`${this.apiUrl}/seller/${sellerId}`, product);
   }
 
