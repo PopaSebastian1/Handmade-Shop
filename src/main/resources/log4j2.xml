@@ -1,18 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="WARN">
+<Configuration status="DEBUG" packages="com.kdgregory.logging.log4j2">
     <Appenders>
+        <!-- Console pentru debugging -->
         <Console name="Console" target="SYSTEM_OUT">
-            <PatternLayout pattern="[%d{HH:mm:ss}] [%-5level] %logger{36} - %msg%n"/>
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m%n"/>
         </Console>
-        <File name="FileLogger" fileName="logs/payara-app.log">
-            <PatternLayout pattern="%d %p %c [%t] %m%n"/>
-        </File>
+
+        <!-- CloudWatch Appender -->
+        <CloudWatchLogs name="CloudWatch">
+            <logGroup>HandmadeShop</logGroup>
+            <logStream>JavaApp-{date}</logStream>
+            <region>us-east-1</region>
+            <batchDelay>2000</batchDelay>
+            <discardThreshold>10000</discardThreshold>
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %-5level [%thread] %logger{36} - %msg%n"/>
+        </CloudWatchLogs>
     </Appenders>
 
     <Loggers>
-        <Root level="info">
+        <!-- Logger specific pentru aplicația ta -->
+        <Logger name="com.example.handmadeshop" level="DEBUG" additivity="false">
             <AppenderRef ref="Console"/>
-            <AppenderRef ref="FileLogger"/>
+            <AppenderRef ref="CloudWatch"/>
+        </Logger>
+
+        <!-- Root logger -->
+        <Root level="INFO">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="CloudWatch"/>
         </Root>
     </Loggers>
 </Configuration>
