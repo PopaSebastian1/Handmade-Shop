@@ -1,0 +1,78 @@
+<div class="menu" *ngIf="hasAnyRole()">
+  <img class="menu-logo" src="assets/logo.png" alt="Logo">
+  <nav>
+    <a *appHasRole="['viewer', 'buyer', 'seller']" class="menu-item" routerLink="/home">Home</a>
+    <a *appHasRole="['buyer', 'seller']" class="menu-item" routerLink="/products">Products</a>
+    <a *appHasRole="['buyer']" class="menu-item" routerLink="/cart">Cart</a>
+    <a *appHasRole="['viewer', 'buyer', 'seller']" class="menu-item" routerLink="/about">About</a>
+  </nav>
+  <div class="right-section">
+    <img class="role" src="assets/role.png" alt="Role" (click)="settings()">
+    <img class="menu-logo right" src="assets/logOut.png" alt="Logout" (click)="navigateToLogin()">
+  </div>
+  <div *ngIf="showPopup" class="popup-container">
+    <div class="popup">
+      <div class="popup-content">
+        <div class="profile-container">
+          <h1>Edit Profile</h1>
+
+          <form #editForm="ngForm" (ngSubmit)="saveChanges()">
+            <div class="form-columns">
+              <div class="form-column">
+                <div class="form-group">
+                  <label for="username">Username</label>
+                  <input type="text" id="username" name="username" [(ngModel)]="user.name" required #username="ngModel">
+                  <div class="error" *ngIf="username.invalid && username.touched">Username is required.</div>
+                </div>
+
+                <div class="form-group">
+                  <label for="surname">Surname</label>
+                  <input type="text" id="surname" name="surname" [(ngModel)]="user.surname" required #surname="ngModel">
+                  <div class="error" *ngIf="surname.invalid && surname.touched">Surname is required.</div>
+                </div>
+
+                <div class="form-group">
+                  <label for="email">Email</label>
+                  <input type="email" id="email" name="email" [(ngModel)]="user.email" required #email="ngModel">
+                  <div class="error" *ngIf="email.invalid && email.touched">Valid email is required.</div>
+                </div>
+              </div>
+
+              <div class="form-column">
+                <div class="form-group">
+                  <label for="password">New Password</label>
+                  <input type="password" id="password" name="newPassword" [(ngModel)]="user.password"
+                    placeholder="Enter new password">
+                </div>
+
+                <div class="form-group">
+                  <label for="confirm-password">Confirm Password</label>
+                  <input type="password" id="confirm-password" name="confirmPassword" [(ngModel)]="confirmPassword"
+                    placeholder="Confirm new password">
+                </div>
+              </div>
+            </div>
+
+            <div class="roles-section">
+              <h3 class="roles-title">Roles</h3>
+              <div class="roles-grid">
+                <div class="role-option" *ngFor="let role of allRoles">
+                  <input type="checkbox" [id]="'role-' + role.name" [value]="role.name" [checked]="hasRole(role.name)"
+                    [disabled]="role.name === 'viewer'" (change)="role.name !== 'viewer' && toggleRole(role.name)">
+                  <label [for]="'role-' + role.name">{{ role.name | titlecase }}</label>
+                </div>
+              </div>
+
+            </div>
+
+            <div class="buttons">
+              <button class="btn btn-secondary" type="button" (click)="togglePopup()">Close</button>
+              <button type="submit" class="btn btn-save">Save Changes</button>
+            </div>
+          </form>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
