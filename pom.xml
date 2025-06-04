@@ -21,6 +21,20 @@
 
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
+            <artifactId>rekognition</artifactId>
+            <version>2.25.6</version>
+        </dependency>
+
+        <!-- AWS SDK - autentificare (ProfileCredentialsProvider) -->
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>auth</artifactId>
+            <version>2.25.6</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
             <artifactId>kms</artifactId>
             <version>2.20.0</version>
         </dependency>
