@@ -30,7 +30,7 @@ declare global {
 })
 export class GoogleAuthService {
   private googleClientId = '251639296822-2rts40g7g70i0lsfv3d4uriic2597bbi.apps.googleusercontent.com';
-  private baseURL = 'http://localhost:8080/Handmade-Shopping-1.0-SNAPSHOT/api/auth';
+  private baseURL = 'http://54.166.166.136:8080/Handmade-Shopping-1.0-SNAPSHOT/api/auth';
   private googleScriptLoaded = false;
   
   constructor(
