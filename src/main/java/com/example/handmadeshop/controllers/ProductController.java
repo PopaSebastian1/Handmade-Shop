@@ -4,11 +4,16 @@ import com.example.handmadeshop.DTO.ProductDTO;
 import com.example.handmadeshop.DTO.UserDTO;
 import com.example.handmadeshop.Security.Autenticated;
 import com.example.handmadeshop.service.ProductService;
+import com.example.handmadeshop.service.RekognitionService;
 import com.example.handmadeshop.service.UserService;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import software.amazon.awssdk.services.rekognition.model.ModerationLabel;
+
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -22,6 +27,8 @@ public class ProductController {
     private ProductService productService;
     @Inject
     private UserService userService;
+    @Inject
+    private RekognitionService rekognitionService;
 
     @GET
     @Path("/user/{userId}")
@@ -115,8 +122,28 @@ public class ProductController {
             @PathParam("sellerId") int sellerId,
             ProductDTO productDTO) {
         logger.info("Seller " + sellerId + " is adding product for sale: " + productDTO);
-
+        java.nio.file.Path tempFile=null;
         try {
+            // 0. Descarcăm imaginea și verificăm conținutul
+            // download to temp file
+            tempFile = rekognitionService.downloadImageToTempFile(productDTO.getImage());
+            byte[] imageBytes = Files.readAllBytes(tempFile);
+
+            // inside addProductForSale
+            List<ModerationLabel> labels = rekognitionService.detectModerationLabels(imageBytes, 60F);
+            if (!labels.isEmpty()) {
+                ModerationLabel topLabel = labels.stream()
+                        .max((a, b) -> Float.compare(a.confidence(), b.confidence()))
+                        .orElse(labels.get(0));
+                String errorMsg = String.format(
+                        "Image contains inappropriate content: %s (confidence: %.2f%%)",
+                        topLabel.name(), topLabel.confidence()
+                );
+                return Response.status(Response.Status.CONFLICT)
+                        .entity(errorMsg)
+                        .build();
+            }
+
             // 1. Verificăm dacă produsul există deja pentru acest seller
             boolean productExists = productService.checkExistingProductForSeller(
                     sellerId,
@@ -150,8 +177,13 @@ public class ProductController {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("Error adding product for sale: " + e.getMessage())
                     .build();
-        }
+        } finally {
+            if (tempFile != null) {
+                try { Files.deleteIfExists(tempFile); }
+                catch (IOException ignore) { }
+            }
     }
+        }
 
     @GET
     //@Autenticated
