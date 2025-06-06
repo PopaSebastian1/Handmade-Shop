@@ -1,3 +1,4 @@
+// menu.component.ts
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { UserService } from '../services/user-service/user.service';
@@ -8,17 +9,19 @@ import { Role } from '../models/role.model';
 @Component({
   selector: 'app-menu',
   templateUrl: './menu.component.html',
-  styleUrl: './menu.component.css'
+  styleUrls: ['./menu.component.css'] // <-- corect, trebuie să fie styleUrls (cu 's')
 })
 export class MenuComponent implements OnInit {
-  nume: string = '';
   user: User = User.createDefault();
   showPopup = false;
   allRoles: Role[] = [];
   confirmPassword: string = '';
 
-  constructor(private router: Router, private userService: UserService, private roleService: RoleService) {
-  }
+  constructor(
+    private router: Router,
+    private userService: UserService,
+    private roleService: RoleService
+  ) { }
 
   ngOnInit() {
     this.userService.currentUserData.subscribe(user => {
@@ -43,9 +46,27 @@ export class MenuComponent implements OnInit {
     this.togglePopup();
   }
 
-  togglePopup() {
-    this.showPopup = !this.showPopup;
+togglePopup() {
+  if (!this.showPopup) {
+    this.userService.currentUserData.subscribe(user => {
+      if (user) {
+        // Creează un nou obiect User cu toate proprietățile necesare
+        this.user = new User(
+          user.name,
+          user.surname,
+          user.email,
+          [...user.roles],
+          user.password,
+          user.clientId,
+          user.clientSecret,
+          user.id
+        );
+        this.confirmPassword = user.password || '';
+      }
+    }).unsubscribe();
   }
+  this.showPopup = !this.showPopup;
+}
 
   toggleRole(roleName: string): void {
     if (this.user.roles.includes(roleName)) {
@@ -65,32 +86,22 @@ export class MenuComponent implements OnInit {
       return;
     }
 
-    // Ensure viewer role is always present
     this.user.roles = [...new Set(this.user.roles)];
     if (!this.user.roles.includes('viewer')) {
       this.user.roles.push('viewer');
     }
 
-    // First update user details if needed
     this.userService.updateUser(this.user).subscribe({
       next: () => {
-        // Then update roles separately
         this.userService.updateUserRoles(this.user.id!, this.user.roles).subscribe({
           next: () => {
             this.userService.setUserData(this.user);
             this.togglePopup();
           },
-          error: (error) => {
-            console.error('Error updating roles:', error);
-            alert('Failed to save role changes.');
-          }
+          error: (error) => console.error('Error updating roles:', error)
         });
       },
-      error: (error) => {
-        console.error('Error updating user:', error);
-        alert('Failed to save changes.');
-      }
+      error: (error) => console.error('Error updating user:', error)
     });
   }
-
 }

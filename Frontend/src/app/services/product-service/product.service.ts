@@ -47,9 +47,10 @@ export class ProductService {
   associateUserWithProduct(productId: number, userId: number, quantity: number): Observable<void> {
     return this.http.post<void>(
       `${this.apiUrl}/${productId}/user/${userId}?quantity=${quantity}`,
-      {}
+      {},
+      { responseType: 'text' as 'json' } 
     );
-  }
+  }  
   
   // New method to get products with user-specific quantities
   getProductsForUserWithQuantities(userId: number): Observable<Product[]> {

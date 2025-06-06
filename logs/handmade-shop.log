@@ -1,0 +1,13 @@
+2025-06-01 14:38:17 INFO  com.example.handmadeshop.Utility.TestLogging:93 - ✅ ENHANCED TEST: Application started at 2025-06-01T14:38:17.351539800
+2025-06-01 14:38:17 WARN  com.example.handmadeshop.Utility.TestLogging:94 - ⚠️ ENHANCED TEST: This is a warning from local development
+2025-06-01 14:38:17 ERROR com.example.handmadeshop.Utility.TestLogging:95 - ❌ ENHANCED TEST: This is an error message for testing
+2025-06-01 14:38:17 DEBUG com.example.handmadeshop.Utility.TestLogging:96 - 🔍 ENHANCED TEST: Debug message - should appear due to logger level
+2025-06-01 14:38:17 INFO  com.example.handmadeshop.Utility.TestLogging:99 - 📊 ENHANCED TEST: User action - login attempt for user: testuser@example.com
+2025-06-01 14:38:17 INFO  com.example.handmadeshop.Utility.TestLogging:100 - 🛒 ENHANCED TEST: Product created - ID: 12345, Name: Handmade Vase
+2025-06-01 14:38:17 INFO  com.example.handmadeshop.Utility.TestLogging:101 - 💰 ENHANCED TEST: Order processed - Amount: $99.99, OrderID: ORD-2024-001
+2025-06-01 14:38:17 INFO  com.example.handmadeshop.Utility.TestLogging:106 - 🔗 ENHANCED TEST: Context-aware logging with user and session info
+2025-06-01 14:38:17 ERROR com.example.handmadeshop.Utility.TestLogging:113 - 🚨 ENHANCED TEST: Exception caught during processing
+java.lang.RuntimeException: Test exception for CloudWatch
+	at com.example.handmadeshop.Utility.TestLogging.performLoggingTests(TestLogging.java:111) [classes/:?]
+	at com.example.handmadeshop.Utility.TestLogging.main(TestLogging.java:28) [classes/:?]
+2025-06-01 14:38:27 INFO  com.example.handmadeshop.Utility.TestLogging:125 - 🎉 ENHANCED TEST: Final message after 10-second delay

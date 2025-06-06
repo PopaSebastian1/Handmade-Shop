@@ -30,3 +30,14 @@
     </div>
   </ng-template>
 </div>
+
+<div *ngIf="showSuccessPopup" class="popup-container">
+  <div class="popup">
+    <div class="popup-content">
+      <p>{{ successMessage }}</p>
+      <div class="form-buttons center-button">
+        <button class="btn btn-primary" (click)="closeSuccessPopup()">OK</button>
+      </div>
+    </div>
+  </div>
+</div>

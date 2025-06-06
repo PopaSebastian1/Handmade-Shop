@@ -5,6 +5,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { User } from '../models/user.model';
 import { GoogleAuthService } from '../../app/services/google-auth/google-auth.service';
 import { UserService } from '../services/user-service/user.service';
+import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
   selector: 'app-login',
@@ -16,6 +17,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
   baseURL: string = 'http://54.166.166.136:8080/Handmade-Shopping-1.0-SNAPSHOT/api/users';
   showPopup = false;
   googleButtonRendered = false;
+  popupMessage: string = 'Incorrect username or password. Please try again.';
 
   togglePopup(): void {
     this.showPopup = !this.showPopup;
@@ -27,10 +29,26 @@ export class LoginComponent implements OnInit, AfterViewInit {
   });
 
   signupForm = this.fb.group({
-    name: ['', Validators.required],
-    surename: ['', Validators.required],
-    email: ['', Validators.required],
-    password: ['', Validators.required],
+    name: ['', [
+      Validators.required,
+      Validators.minLength(3),
+      Validators.maxLength(50)
+    ]],
+    surename: ['', [
+      Validators.required,
+      Validators.minLength(3),
+      Validators.maxLength(50)
+    ]],
+    email: ['', [
+      Validators.required,
+      Validators.email
+    ]],
+    password: ['', [
+      Validators.required,
+      Validators.minLength(8),
+      Validators.maxLength(50),
+      Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/)
+    ]],
   });
 
   constructor(
@@ -38,7 +56,8 @@ export class LoginComponent implements OnInit, AfterViewInit {
     private router: Router,
     private http: HttpClient,
     private fb: FormBuilder,
-    private googleAuthService: GoogleAuthService
+    private googleAuthService: GoogleAuthService,
+    private cdr: ChangeDetectorRef
   ) { }
 
   ngOnInit(): void { }
@@ -63,6 +82,8 @@ export class LoginComponent implements OnInit, AfterViewInit {
 
     this.googleButtonRendered = loginSuccess && signupSuccess;
     console.log('Google buttons initialized:', this.googleButtonRendered);
+
+    this.cdr.detectChanges();
   }
 
   manualGoogleLogin(): void {
@@ -76,21 +97,22 @@ export class LoginComponent implements OnInit, AfterViewInit {
 
   onLogin(event: Event): void {
     event.preventDefault();
-  
+
     if (this.loginForm.invalid) return;
-  
+
     const { email, password } = this.loginForm.value;
-  
+
     this.userService.loginUser(email!, password!).subscribe({
       next: (response) => {
-        
+
         console.log('Login successful');
-    
-        
+
+
         this.router.navigate(['/home']);
       },
       error: (error) => {
         console.error('Login error:', error);
+        this.popupMessage = 'Incorrect username or password. Please try again.';
         this.togglePopup();
       }
     });
@@ -127,8 +149,13 @@ export class LoginComponent implements OnInit, AfterViewInit {
     this.userService.signupUser(newUser).subscribe({
       next: () => this.handleSuccessfulAuth(email!),
       error: (error) => {
-        console.error('Signup error:', error);
-        this.togglePopup();
+        if (error.status === 409) {
+          this.popupMessage = 'This email is already in use.';
+          this.togglePopup();
+        } else {
+          this.popupMessage = 'Incorrect username or password. Please try again.';
+          this.togglePopup();
+        }
       }
     });
   }

@@ -28,6 +28,16 @@ public class UserController {
 
     @POST
     public Response createUser(UserDTO userDTO) {
+        List<UserDTO> allUsers = userService.getAllUsers();
+
+        for (UserDTO user : allUsers) {
+            if (user.getEmail().equals(userDTO.getEmail())) {
+                return Response.status(Response.Status.CONFLICT)
+                        .entity("existent user")
+                        .build();
+            }
+        }
+
         UserDTO createdUser = userService.createUser(userDTO);
         return Response.status(Response.Status.CREATED).entity(createdUser).build();
     }

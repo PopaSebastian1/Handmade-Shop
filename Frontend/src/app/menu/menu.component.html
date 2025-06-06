@@ -1,3 +1,4 @@
+<!-- menu.component.html -->
 <div class="menu" *ngIf="hasAnyRole()">
   <img class="menu-logo" src="assets/logo.png" alt="Logo">
   <nav>
@@ -10,6 +11,7 @@
     <img class="role" src="assets/role.png" alt="Role" (click)="settings()">
     <img class="menu-logo right" src="assets/logOut.png" alt="Logout" (click)="navigateToLogin()">
   </div>
+
   <div *ngIf="showPopup" class="popup-container">
     <div class="popup">
       <div class="popup-content">
@@ -21,34 +23,58 @@
               <div class="form-column">
                 <div class="form-group">
                   <label for="username">Username</label>
-                  <input type="text" id="username" name="username" [(ngModel)]="user.name" required #username="ngModel">
-                  <div class="error" *ngIf="username.invalid && username.touched">Username is required.</div>
+                  <input type="text" id="username" name="username" [(ngModel)]="user.name" required minlength="3"
+                    maxlength="30" pattern="[a-zA-Z0-9]+" #username="ngModel">
+                  <div class="validation-error" *ngIf="username.invalid && (username.dirty || username.touched)">
+                    <div *ngIf="username.errors?.['required']">Username is required</div>
+                    <div *ngIf="username.errors?.['minlength']">Minimum 3 characters</div>
+                    <div *ngIf="username.errors?.['maxlength']">Maximum 30 characters</div>
+                    <div *ngIf="username.errors?.['pattern']">Alphanumeric characters only</div>
+                  </div>
                 </div>
 
                 <div class="form-group">
                   <label for="surname">Surname</label>
-                  <input type="text" id="surname" name="surname" [(ngModel)]="user.surname" required #surname="ngModel">
-                  <div class="error" *ngIf="surname.invalid && surname.touched">Surname is required.</div>
+                  <input type="text" id="surname" name="surname" [(ngModel)]="user.surname" required minlength="2"
+                    maxlength="30" #surname="ngModel">
+                  <div class="validation-error" *ngIf="surname.invalid && (surname.dirty || surname.touched)">
+                    <div *ngIf="surname.errors?.['required']">Surname is required</div>
+                    <div *ngIf="surname.errors?.['minlength']">Minimum 2 characters</div>
+                    <div *ngIf="surname.errors?.['maxlength']">Maximum 30 characters</div>
+                  </div>
                 </div>
 
                 <div class="form-group">
                   <label for="email">Email</label>
-                  <input type="email" id="email" name="email" [(ngModel)]="user.email" required #email="ngModel">
-                  <div class="error" *ngIf="email.invalid && email.touched">Valid email is required.</div>
+                  <input type="email" id="email" name="email" [(ngModel)]="user.email" required
+                    pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" #email="ngModel">
+                  <div class="validation-error" *ngIf="email.invalid && (email.dirty || email.touched)">
+                    <div *ngIf="email.errors?.['required']">Email is required</div>
+                    <div *ngIf="email.errors?.['pattern']">Invalid email format</div>
+                  </div>
                 </div>
               </div>
 
               <div class="form-column">
                 <div class="form-group">
                   <label for="password">New Password</label>
-                  <input type="password" id="password" name="newPassword" [(ngModel)]="user.password"
-                    placeholder="Enter new password">
+                  <input type="password" id="password" name="newPassword" [(ngModel)]="user.password" minlength="8"
+                    pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" #password="ngModel">
+                  <div class="validation-error" *ngIf="password.invalid && (password.dirty || password.touched)">
+                    <div *ngIf="password.errors?.['minlength']">Minimum 8 characters</div>
+                    <div *ngIf="password.errors?.['pattern']">Must contain uppercase, lowercase and number</div>
+                  </div>
                 </div>
 
+                <!-- Modificare la confirm password -->
                 <div class="form-group">
                   <label for="confirm-password">Confirm Password</label>
                   <input type="password" id="confirm-password" name="confirmPassword" [(ngModel)]="confirmPassword"
-                    placeholder="Confirm new password">
+                    #confirmPasswordInput="ngModel">
+                  <div class="validation-error"
+                    *ngIf="(confirmPasswordInput.touched || confirmPasswordInput.dirty) && confirmPassword !== user.password">
+                    • Passwords do not match
+                  </div>
                 </div>
               </div>
             </div>
@@ -62,15 +88,13 @@
                   <label [for]="'role-' + role.name">{{ role.name | titlecase }}</label>
                 </div>
               </div>
-
             </div>
 
             <div class="buttons">
               <button class="btn btn-secondary" type="button" (click)="togglePopup()">Close</button>
-              <button type="submit" class="btn btn-save">Save Changes</button>
+              <button type="submit" class="btn btn-save" [disabled]="editForm.invalid">Save Changes</button>
             </div>
           </form>
-
         </div>
       </div>
     </div>
