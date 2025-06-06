@@ -29,7 +29,7 @@ interface ProductData {
   providedIn: 'root'
 })
 export class DataService {
-  private baseUrl = 'http://localhost:8080/Handmade-Shopping-1.0-SNAPSHOT/api/';
+  private baseUrl = 'http://54.166.166.136:8080/Handmade-Shopping-1.0-SNAPSHOT/api/';
   private user = new BehaviorSubject<string>('');
   currentUser = this.user.asObservable();
   nameCurrentUser: string = '';
