@@ -12,8 +12,8 @@ import { UserService } from '../services/user-service/user.service';
   styleUrl: './login.component.css'
 })
 export class LoginComponent implements OnInit, AfterViewInit {
-  baseURLGoogle: string = 'http://localhost:8080/Handmade-Shopping-1.0-SNAPSHOT/api/auth';
-  baseURL: string = 'http://localhost:8080/Handmade-Shopping-1.0-SNAPSHOT/api/users';
+  baseURLGoogle: string = 'http://54.166.166.136:8080/Handmade-Shopping-1.0-SNAPSHOT/api/auth';
+  baseURL: string = 'http://54.166.166.136:8080/Handmade-Shopping-1.0-SNAPSHOT/api/users';
   showPopup = false;
   googleButtonRendered = false;
 
