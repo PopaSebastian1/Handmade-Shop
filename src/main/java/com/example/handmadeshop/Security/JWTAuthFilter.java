@@ -12,7 +12,7 @@ import jakarta.ws.rs.ext.Provider;
 
 @Provider
 @Autenticated
-@Priority(Priorities.AUTHORIZATION)
+@Priority(100)
 public class JWTAuthFilter implements ContainerRequestFilter {
 
     @Inject

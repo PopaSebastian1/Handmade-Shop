@@ -42,14 +42,14 @@ export class UserService {
       throw new Error('Invalid JWT token');
     }
   }
-  
+
 
   processJwtToken(token: string): void {
     try {
       // Decodează și salvează token-ul
       const payload = this.jwtDecoder.decodeJwt(token);
       this.jwtDecoder.saveToken(token);
-      
+
       // Crează un obiect User din payload și setează utilizatorul curent
       const user = this.createUserFromPayload(payload);
       this.currentUserSubject.next(user);
@@ -58,7 +58,7 @@ export class UserService {
       console.error('Failed to process JWT token:', error);
     }
   }
-  
+
   shouldDisplay(): boolean {
     const route = this.router.url;
     return this.loggedIn.getValue() && !['/login', '/home'].includes(route);
@@ -67,7 +67,7 @@ export class UserService {
   restoreSession(): boolean {
     // Verifică dacă există un token valid
     const payload = this.jwtDecoder.getPayloadIfValid();
-    
+
     if (payload) {
       // Crează un obiect User din payload și setează utilizatorul curent
       const user: User = this.createUserFromPayload(payload);
@@ -75,11 +75,11 @@ export class UserService {
       this.setUser(user.email);
       return true;
     }
-    
+
     return false;
   }
 
-  
+
 
   private createUserFromPayload(payload: JwtPayload): User {
     return {
@@ -104,15 +104,16 @@ export class UserService {
   }
 
   // User management methods
- 
+
   logoutUser(): void {
     // Șterge token-ul
     this.jwtDecoder.removeToken();
-    
+
     // Resetează starea utilizatorului
     this.currentUserSubject.next(null);
     this.user.next('');
     this.loggedIn.next(false);
+
   }
 
 
@@ -135,8 +136,8 @@ export class UserService {
     const params = new HttpParams()
       .set('email', email)
       .set('password', password);
-  
-    return this.http.post(`${this.baseUrl}/users/login`, null, { 
+
+    return this.http.post(`${this.baseUrl}/users/login`, null, {
       params,
       responseType: 'text'
     }).pipe(
@@ -190,7 +191,13 @@ export class UserService {
     return this.currentUserSubject.value;
   }
 
-  updateUserRoles(userId: number, roles: string[]): Observable<any> {
-    return this.http.put(`${this.baseUrl}/users/${userId}/roles`, roles);
+  updateUserRoles(userId: number, roles: string[]): Observable<string> {
+    return this.http.put(
+      `${this.baseUrl}/users/${userId}/roles`,
+      roles,
+      { responseType: 'text' }
+    ).pipe(
+      tap(token => this.processJwtToken(token))
+    );
   }
 }

@@ -8,15 +8,16 @@ import { CartComponent } from './cart/cart.component';
 import { LoginComponent } from './login/login.component';
 import { PayComponent } from './pay/pay.component';
 import { ProductDetailsComponent } from './product-details/product-details.component';
+import { authGuard } from './services/auth/auth.guard';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
-  { path: 'home', component: HomeComponent },
-  { path: 'about', component: AboutComponent },
-  { path: 'products', component: ProductsComponent },
-  { path: 'cart', component: CartComponent },
-  { path: 'pay', component: PayComponent },
-  { path: 'product-details/:image', component: ProductDetailsComponent },
+  { path: 'home', component: HomeComponent, canActivate: [authGuard] },
+  { path: 'about', component: AboutComponent, canActivate: [authGuard] },
+  { path: 'products', component: ProductsComponent, canActivate: [authGuard], data: { roles: ['seller', 'buyer'] } },
+  { path: 'cart', component: CartComponent, canActivate: [authGuard], data: { roles: ['buyer'] } },
+  { path: 'pay', component: PayComponent, canActivate: [authGuard] },
+  { path: 'product-details/:image', component: ProductDetailsComponent, canActivate: [authGuard] },
   { path: '', redirectTo: '/login', pathMatch: 'full' },
 ];
 
