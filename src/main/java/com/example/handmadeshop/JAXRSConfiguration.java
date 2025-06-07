@@ -15,10 +15,11 @@ public class JAXRSConfiguration extends Application {
     @Override
     public Set<Class<?>> getClasses() {
         return Set.of(
+                CorsFilter.class,       // Filtru CORS
+                OptionsResource.class,   // Endpoint OPTIONS
                 UserController.class,
                 ProductController.class,
                 RoleController.class,
-                CorsFilter.class,
                 GoogleAuthController.class,
                 JWTAuthFilter.class,
                 RoleAuthorizationFilter.class
