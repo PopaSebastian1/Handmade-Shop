@@ -8,6 +8,7 @@ import { Router } from '@angular/router';
 import { DataService } from '../../data.service';
 import { JwtDecoderService } from '../jwt-decoder/jwt-decoder.service';
 import { UserService } from '../user-service/user.service';
+import { environment } from '../../environment';
 
 // Extinde interfața Window pentru a include obiectul google
 declare global {
@@ -30,7 +31,7 @@ declare global {
 })
 export class GoogleAuthService {
   private googleClientId = '251639296822-2rts40g7g70i0lsfv3d4uriic2597bbi.apps.googleusercontent.com';
-  private baseURL = 'http://54.166.166.136:8080/Handmade-Shopping-1.0-SNAPSHOT/api/auth';
+  private baseURL = environment.apiUrl + '/auth';
   private googleScriptLoaded = false;
   
   constructor(

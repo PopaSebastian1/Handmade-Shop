@@ -1,14 +1,10 @@
 package com.example.handmadeshop.controllers;
 
-import com.example.handmadeshop.DTO.AuthResponseDTO;
-import com.example.handmadeshop.DTO.ModeMapper;
 import com.example.handmadeshop.DTO.UserDTO;
-import com.example.handmadeshop.EJB.model.User;
-import com.example.handmadeshop.Security.Autenticated;
+import com.example.handmadeshop.security.Autenticated;
 import com.example.handmadeshop.repository.UserRepository;
-import com.example.handmadeshop.service.AuthenticationService;
-import com.example.handmadeshop.service.KmsEncryptionService;
-import com.example.handmadeshop.service.UserService;
+import com.example.handmadeshop.services.AuthenticationService;
+import com.example.handmadeshop.services.UserService;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;

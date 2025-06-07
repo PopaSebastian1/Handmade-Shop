@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map, Observable } from 'rxjs';
-import { environment } from '../google-auth/environment';
+import { environment } from '../../environment';
 import { IRole } from '../../models/role.interface';
 import { Role } from '../../models/role.model';
 

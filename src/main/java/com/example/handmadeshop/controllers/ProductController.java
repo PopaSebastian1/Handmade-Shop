@@ -2,11 +2,11 @@ package com.example.handmadeshop.controllers;
 
 import com.example.handmadeshop.DTO.ProductDTO;
 import com.example.handmadeshop.DTO.UserDTO;
-import com.example.handmadeshop.Security.Autenticated;
-import com.example.handmadeshop.Security.RoleRequired;
-import com.example.handmadeshop.service.ProductService;
-import com.example.handmadeshop.service.RekognitionService;
-import com.example.handmadeshop.service.UserService;
+import com.example.handmadeshop.security.Autenticated;
+import com.example.handmadeshop.security.RoleRequired;
+import com.example.handmadeshop.services.ProductService;
+import com.example.handmadeshop.services.RekognitionService;
+import com.example.handmadeshop.services.UserService;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -14,7 +14,6 @@ import jakarta.ws.rs.core.Response;
 import software.amazon.awssdk.services.rekognition.model.ModerationLabel;
 import java.io.IOException;
 import java.nio.file.Files;
-import org.checkerframework.checker.units.qual.A;
 import java.util.List;
 import java.util.logging.Logger;
 

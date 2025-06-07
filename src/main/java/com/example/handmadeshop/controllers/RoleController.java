@@ -1,8 +1,8 @@
 package com.example.handmadeshop.controllers;
 
 import com.example.handmadeshop.DTO.RoleDTO;
-import com.example.handmadeshop.Security.Autenticated;
-import com.example.handmadeshop.service.RoleService;
+import com.example.handmadeshop.security.Autenticated;
+import com.example.handmadeshop.services.RoleService;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;

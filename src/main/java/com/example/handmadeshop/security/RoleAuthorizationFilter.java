@@ -1,10 +1,9 @@
-package com.example.handmadeshop.Security;
+package com.example.handmadeshop.security;
 
 import com.example.handmadeshop.Utility.JwtUtil;
 import io.jsonwebtoken.Claims;
 import jakarta.annotation.Priority;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.Priorities;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.container.ContainerRequestFilter;
 import jakarta.ws.rs.container.ResourceInfo;

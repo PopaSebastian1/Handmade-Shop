@@ -1,9 +1,8 @@
 package com.example.handmadeshop.controllers;
 
-import com.example.handmadeshop.DTO.AuthResponseDTO;
 import com.example.handmadeshop.DTO.UserDTO;
-import com.example.handmadeshop.service.AuthenticationService;
-import com.example.handmadeshop.service.GoogleAuthService;
+import com.example.handmadeshop.services.AuthenticationService;
+import com.example.handmadeshop.services.GoogleAuthService;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;

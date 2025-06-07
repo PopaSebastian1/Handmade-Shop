@@ -1,4 +1,4 @@
-package com.example.handmadeshop.service;
+package com.example.handmadeshop.services;
 
 import com.example.handmadeshop.DTO.UserDTO;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
@@ -11,7 +11,6 @@ import jakarta.inject.Inject;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.Collections;
-import java.util.Arrays;
 import java.util.logging.Logger;
 import java.util.logging.Level;
 

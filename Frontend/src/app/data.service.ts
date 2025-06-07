@@ -3,6 +3,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
+import { environment } from './environment';
 
 interface Item {
   name: string;
@@ -29,7 +30,7 @@ interface ProductData {
   providedIn: 'root'
 })
 export class DataService {
-  private baseUrl = 'http://54.166.166.136:8080/Handmade-Shopping-1.0-SNAPSHOT/api/';
+  private baseUrl = environment.apiUrl + '/';
   private user = new BehaviorSubject<string>('');
   currentUser = this.user.asObservable();
   nameCurrentUser: string = '';

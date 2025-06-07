@@ -1,4 +1,4 @@
-package com.example.handmadeshop.service;
+package com.example.handmadeshop.services;
 
 import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.regions.Region;

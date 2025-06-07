@@ -6,6 +6,7 @@ import { User } from '../models/user.model';
 import { GoogleAuthService } from '../../app/services/google-auth/google-auth.service';
 import { UserService } from '../services/user-service/user.service';
 import { ChangeDetectorRef } from '@angular/core';
+import { environment } from '../environment';
 
 @Component({
   selector: 'app-login',
@@ -13,8 +14,8 @@ import { ChangeDetectorRef } from '@angular/core';
   styleUrl: './login.component.css'
 })
 export class LoginComponent implements OnInit, AfterViewInit {
-  baseURLGoogle: string = 'http://54.166.166.136:8080/Handmade-Shopping-1.0-SNAPSHOT/api/auth';
-  baseURL: string = 'http://54.166.166.136:8080/Handmade-Shopping-1.0-SNAPSHOT/api/users';
+  baseURLGoogle: string = environment.apiUrl + '/auth';
+  baseURL: string = environment.apiUrl + '/users';
   showPopup = false;
   googleButtonRendered = false;
   popupMessage: string = 'Incorrect username or password. Please try again.';

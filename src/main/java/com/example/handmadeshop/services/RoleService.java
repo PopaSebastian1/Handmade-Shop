@@ -1,4 +1,4 @@
-package com.example.handmadeshop.service;
+package com.example.handmadeshop.services;
 
 import com.example.handmadeshop.DTO.RoleDTO;
 import com.example.handmadeshop.EJB.model.Role;

@@ -1,4 +1,4 @@
-package com.example.handmadeshop.service;
+package com.example.handmadeshop.services;
 
 import jakarta.ejb.Stateless;
 import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;

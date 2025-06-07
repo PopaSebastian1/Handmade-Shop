@@ -3,7 +3,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { environment } from '../google-auth/environment';
+import { environment } from '../../environment';
 import { Product } from '../../models/product.model';
 import { JwtDecoderService } from '../jwt-decoder/jwt-decoder.service';
 @Injectable({
