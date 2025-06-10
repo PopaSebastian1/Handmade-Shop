@@ -21,7 +21,8 @@ public class GoogleAuthService {
     @Inject
     private UserService userService;
 
-    private static final String CLIENT_ID = "251639296822-2rts40g7g70i0lsfv3d4uriic2597bbi.apps.googleusercontent.com";
+    private static final String CLIENT_ID = SecretsManagerService.get("googleClient");
+
 
     private UserDTO verifyGoogleToken(String idTokenString) throws Exception {
         try {

@@ -1,7 +1,9 @@
 package com.example.handmadeshop.Utility;
 
 import com.example.handmadeshop.DTO.UserDTO;
+import com.example.handmadeshop.services.SecretsManagerService;
 import io.jsonwebtoken.*;
+import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.ejb.Singleton;
 import jakarta.ejb.Stateless;
@@ -15,7 +17,8 @@ import java.util.logging.Logger;
 @Stateless
 public class JwtUtil {
     private static final Logger logger = Logger.getLogger(JwtUtil.class.getName());
-    private static final Key SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+    private static final String SECRET_KEY_STRING = SecretsManagerService.get("encryptionKey");
+    private static final Key SECRET_KEY = Keys.hmacShaKeyFor(Decoders.BASE64.decode(SECRET_KEY_STRING));
     private static final long EXPIRATION_TIME = 86400000; // 24 hours
 
     public String generateToken(UserDTO user) {
