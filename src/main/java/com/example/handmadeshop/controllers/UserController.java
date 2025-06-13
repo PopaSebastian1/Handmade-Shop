@@ -25,14 +25,12 @@ public class UserController {
 
     @POST
     public Response createUser(UserDTO userDTO) {
-        List<UserDTO> allUsers = userService.getAllUsers();
+        UserDTO existingUser = userService.findByEmail(userDTO.getEmail());
 
-        for (UserDTO user : allUsers) {
-            if (user.getEmail().equals(userDTO.getEmail())) {
-                return Response.status(Response.Status.CONFLICT)
-                        .entity("existent user")
-                        .build();
-            }
+        if (existingUser != null) {
+            return Response.status(Response.Status.CONFLICT)
+                    .entity("existent user")
+                    .build();
         }
 
         UserDTO createdUser = userService.createUser(userDTO);
@@ -106,8 +104,33 @@ public class UserController {
             List<String> roleNames
     ) {
         UserDTO updated = userService.updateUserRoles(userId, roleNames);
+
+        // Pentru a genera un token nou, avem nevoie de email-ul decriptat
+        // updated.getEmail() va fi deja decriptat de către UserService.toDTO()
         String newToken = authenticationService.authenticate(updated.getEmail(), updated.getPassword());
 
         return Response.ok(newToken).build();
+    }
+
+    @DELETE
+    @Path("/{userId}/process-order")
+    @Autenticated
+    public Response processOrder(@PathParam("userId") Integer userId) {
+        if (userId == null) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity("{\"error\":\"User ID is required\"}")
+                    .build();
+        }
+
+        try {
+            userService.clearUserCart(userId);
+            return Response.ok()
+                    .entity("{\"message\":\"Order processed successfully. Cart cleared.\"}")
+                    .build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("{\"error\":\"Failed to process order\"}")
+                    .build();
+        }
     }
 }

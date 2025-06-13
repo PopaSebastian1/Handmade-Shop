@@ -154,10 +154,6 @@ export class ProductsComponent implements OnInit {
     this.showSuccessPopup = false;
   }
 
-  viewProductDetails(image: string) {
-    this.router.navigate(['/product-details', image]);
-  }
-
   addProduct(): void {
     if (this.productForm.invalid) {
       this.productForm.markAllAsTouched();

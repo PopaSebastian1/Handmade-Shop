@@ -10,13 +10,13 @@ import jakarta.ws.rs.ApplicationPath;
 import jakarta.ws.rs.core.Application;
 import java.util.Set;
 
-@ApplicationPath("api") // Fără slash la început
+@ApplicationPath("api") 
 public class JAXRSConfiguration extends Application {
     @Override
     public Set<Class<?>> getClasses() {
         return Set.of(
-                CorsFilter.class,       // Filtru CORS
-                OptionsResource.class,   // Endpoint OPTIONS
+                CorsFilter.class,       
+                OptionsResource.class,   
                 UserController.class,
                 ProductController.class,
                 RoleController.class,

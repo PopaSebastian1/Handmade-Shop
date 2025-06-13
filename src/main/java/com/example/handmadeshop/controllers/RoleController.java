@@ -48,7 +48,6 @@ public class RoleController {
     }
 
     @GET
-    @Autenticated
     public Response getAllRoles() {
         return Response
                 .ok(roleService.getAllRoles())

@@ -20,11 +20,29 @@ public class UserService {
     @Inject
     private RoleRepository roleRepository;
 
+    private final KmsEncryptionService kmsEncryptionService;
+
     @PersistenceContext
     private EntityManager em;
 
+    public UserService() {
+        this.kmsEncryptionService = new KmsEncryptionService();
+    }
+
     public UserDTO createUser(UserDTO userDTO) {
-        User user = ModeMapper.toUser(userDTO);
+        User user = new User();
+        user.setName(kmsEncryptionService.encrypt(userDTO.getName()));
+        user.setSurname(kmsEncryptionService.encrypt(userDTO.getSurname()));
+        user.setEmail(kmsEncryptionService.encrypt(userDTO.getEmail()));
+        user.setPassword(kmsEncryptionService.encrypt(userDTO.getPassword()));
+
+        if (userDTO.getClientId() != null) {
+            user.setClientid(kmsEncryptionService.encrypt(userDTO.getClientId()));
+        }
+        if (userDTO.getClientSecret() != null) {
+            user.setClientsecret(kmsEncryptionService.encrypt(userDTO.getClientSecret()));
+        }
+
         userRepository.create(user);
 
         if (userDTO.getRoles() != null) {
@@ -36,20 +54,26 @@ public class UserService {
             }
         }
 
-        User freshUser = userRepository.findById(user.getId());
+        User freshUser = userRepository.findByIdWithRoles(user.getId());
         return toDTO(freshUser);
     }
-
 
     public UserDTO toDTO(User user) {
         UserDTO dto = new UserDTO();
         dto.setId(user.getId());
-        dto.setName(user.getName());
-        dto.setSurname(user.getSurname());
-        dto.setEmail(user.getEmail());
-        dto.setClientId(user.getClientid());
 
-        // Map roles
+        dto.setName(kmsEncryptionService.decrypt(user.getName()));
+        dto.setSurname(kmsEncryptionService.decrypt(user.getSurname()));
+        dto.setEmail(kmsEncryptionService.decrypt(user.getEmail()));
+        dto.setPassword(kmsEncryptionService.decrypt(user.getPassword()));
+
+        if (user.getClientid() != null) {
+            dto.setClientId(kmsEncryptionService.decrypt(user.getClientid()));
+        }
+        if (user.getClientsecret() != null) {
+            dto.setClientSecret(kmsEncryptionService.decrypt(user.getClientsecret()));
+        }
+
         if (user.getUserRoles() != null) {
             dto.setRoles(user.getUserRoles().stream()
                     .map(ur -> ur.getRoleid().getName())
@@ -65,19 +89,18 @@ public class UserService {
     }
 
     public UserDTO findByEmail(String email) {
-        KmsEncryptionService kmsEncryptionService = new KmsEncryptionService();
         List<User> allUsers = userRepository.findAll();
         User matchedUser = null;
 
         for (User user : allUsers) {
-          //  String decryptedEmail = kmsEncryptionService.decrypt(user.getEmail());
-            if (user.getEmail().equals(email)) {
+            String decryptedEmail = kmsEncryptionService.decrypt(user.getEmail());
+            if (decryptedEmail.equals(email)) {
                 matchedUser = user;
                 break;
             }
         }
         if (matchedUser != null) {
-            return ModeMapper.toUserDTO(matchedUser);
+            return toDTO(matchedUser);
         } else {
             return null;
         }
@@ -92,22 +115,28 @@ public class UserService {
     public UserDTO updateUser(Integer id, UserDTO userDTO) {
         User existingUser = userRepository.findById(id);
         if (existingUser != null) {
-            existingUser.setName(userDTO.getName());
-            existingUser.setSurname(userDTO.getSurname());
-            existingUser.setEmail(userDTO.getEmail());
-//            existingUser.setClientid(userDTO.getClientId());
-//            existingUser.setClientsecret(userDTO.getClientSecret());
+            existingUser.setName(kmsEncryptionService.encrypt(userDTO.getName()));
+            existingUser.setSurname(kmsEncryptionService.encrypt(userDTO.getSurname()));
+            existingUser.setEmail(kmsEncryptionService.encrypt(userDTO.getEmail()));
 
             if (userDTO.getPassword() != null) {
-                existingUser.setPassword(userDTO.getPassword());
+                existingUser.setPassword(kmsEncryptionService.encrypt(userDTO.getPassword()));
             }
 
-            userRepository.removeAllRoles(id); // ștergem rolurile vechi
+            if (userDTO.getClientId() != null) {
+                existingUser.setClientid(kmsEncryptionService.encrypt(userDTO.getClientId()));
+            }
+
+            if (userDTO.getClientSecret() != null) {
+                existingUser.setClientsecret(kmsEncryptionService.encrypt(userDTO.getClientSecret()));
+            }
+
+            userRepository.removeAllRoles(id);
             if (userDTO.getRoles() != null) {
                 for (String roleName : userDTO.getRoles()) {
                     Role role = roleRepository.findByName(roleName);
                     if (role != null) {
-                        userRepository.addRoleToUser(id, role.getId()); // adăugăm noile roluri
+                        userRepository.addRoleToUser(id, role.getId());
                     }
                 }
             }
@@ -121,22 +150,18 @@ public class UserService {
         return null;
     }
 
-
     public void deleteUser(Integer id) {
         userRepository.delete(id);
     }
 
     public UserDTO updateUserRoles(Integer userId, List<String> roleNames) {
-        // Start by getting user without roles to avoid caching issues
         User user = userRepository.findById(userId);
         if (user == null) {
             throw new IllegalArgumentException("User not found");
         }
 
-        // Clear existing roles
         userRepository.removeAllRoles(userId);
 
-        // Add new roles
         for (String roleName : roleNames) {
             Role role = roleRepository.findByName(roleName);
             if (role != null) {
@@ -147,8 +172,11 @@ public class UserService {
         em.flush();
         em.clear();
 
-        // Get fresh data with roles
         User updatedUser = userRepository.findByIdWithRoles(userId);
         return toDTO(updatedUser);
+    }
+
+    public void clearUserCart(Integer userId) {
+        userRepository.clearUserProducts(userId);
     }
 }

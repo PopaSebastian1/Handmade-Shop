@@ -85,4 +85,10 @@ public class UserRepository {
             return null;
         }
     }
+
+    public void clearUserProducts(Integer userId) {
+        em.createQuery("DELETE FROM UserProduct up WHERE up.id.userid = :userId")
+                .setParameter("userId", userId)
+                .executeUpdate();
+    }
 }

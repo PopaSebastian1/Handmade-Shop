@@ -200,4 +200,10 @@ export class UserService {
       tap(token => this.processJwtToken(token))
     );
   }
+
+  processOrder(userId: number): Observable<any> {
+    return this.http.delete(`${this.baseUrl}/users/${userId}/process-order`, {
+      responseType: 'json'
+    });
+  }
 }

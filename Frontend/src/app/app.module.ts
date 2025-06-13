@@ -12,10 +12,10 @@ import { ProductsComponent } from './products/products.component';
 import { CartComponent } from './cart/cart.component';
 import { MenuComponent } from './menu/menu.component';
 import { PayComponent } from './pay/pay.component';
-import { ProductDetailsComponent } from './product-details/product-details.component';
 import { FormsModule } from '@angular/forms';
 import { HasRoleDirective } from './has-role.directive';
 import { AuthInterceptor } from './services/auth/auth.interceptor';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [
@@ -27,8 +27,7 @@ import { AuthInterceptor } from './services/auth/auth.interceptor';
     CartComponent,
     MenuComponent,
     PayComponent,
-    ProductDetailsComponent,
-    HasRoleDirective
+    HasRoleDirective,
   ],
   imports: [
     BrowserModule,
@@ -36,6 +35,7 @@ import { AuthInterceptor } from './services/auth/auth.interceptor';
     ReactiveFormsModule,
     HttpClientModule,
     FormsModule,
+    BrowserAnimationsModule,
   ],
   providers: [
     {

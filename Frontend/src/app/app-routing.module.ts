@@ -7,7 +7,6 @@ import { ProductsComponent } from './products/products.component';
 import { CartComponent } from './cart/cart.component';
 import { LoginComponent } from './login/login.component';
 import { PayComponent } from './pay/pay.component';
-import { ProductDetailsComponent } from './product-details/product-details.component';
 import { authGuard } from './services/auth/auth.guard';
 
 const routes: Routes = [
@@ -17,7 +16,6 @@ const routes: Routes = [
   { path: 'products', component: ProductsComponent, canActivate: [authGuard], data: { roles: ['seller', 'buyer'] } },
   { path: 'cart', component: CartComponent, canActivate: [authGuard], data: { roles: ['buyer'] } },
   { path: 'pay', component: PayComponent, canActivate: [authGuard] },
-  { path: 'product-details/:image', component: ProductDetailsComponent, canActivate: [authGuard] },
   { path: '', redirectTo: '/login', pathMatch: 'full' },
 ];
 

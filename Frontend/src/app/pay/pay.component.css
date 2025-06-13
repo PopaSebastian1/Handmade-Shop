@@ -11,64 +11,140 @@ body {
 
 .main {
     width: 100%;
-    max-width: 400px;
-    /* aliniaza in centru orizontal si vertical */
+    height: -webkit-fill-available;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    padding: 40px 0; /* Added top and bottom padding */
 }
 
 .container {
+    margin-top: 250px;
     background-color: white;
     border-radius: 12px;
-    padding: 24px;
+    padding: 30px; /* Reduced from 50px */
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    max-width: 900px;
+    width: 100%;
 }
 
 .heading {
     display: flex;
     align-items: center;
     gap: 12px;
-    margin-bottom: 24px;
+    margin-bottom: 20px; /* Reduced from 32px */
+    padding-bottom: 12px; /* Reduced from 16px */
+    border-bottom: 1px solid #eee;
+    justify-content: center;
 }
 
 .heading h1 {
-    font-size: 24px;
+    font-size: 24px; /* Reduced from 28px */
     font-weight: 600;
     margin: 0;
     color: #1B1B1B;
 }
 
+/* Layout pe două coloane */
+.form-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px; /* Reduced from 40px */
+}
+
+.form-column {
+    display: flex;
+    flex-direction: column;
+}
+
+.section {
+    margin-bottom: 20px; /* Reduced from 32px */
+}
+
+.section-title {
+    font-size: 16px; /* Reduced from 18px */
+    font-weight: 600;
+    color: #1B1B1B;
+    margin: 0 0 12px 0; /* Reduced from 20px */
+    padding-bottom: 6px; /* Reduced from 8px */
+    border-bottom: 2px solid #f0f0f0;
+}
+
 label {
     display: block;
-    font-size: 14px;
+    font-size: 13px; /* Reduced from 14px */
     font-weight: 500;
     color: #1B1B1B;
-    margin-bottom: 8px;
+    margin-bottom: 4px; /* Reduced from 6px */
 }
 
-input {
+input, select, textarea {
     width: 100%;
-    padding: 12px;
+    padding: 8px 10px; /* Reduced from 12px */
     border: 1px solid #ddd;
-    border-radius: 8px;
-    font-size: 16px;
-    margin-bottom: 16px;
+    border-radius: 6px; /* Reduced from 8px */
+    font-size: 14px; /* Reduced from 16px */
+    margin-bottom: 10px; /* Reduced from 16px */
     box-sizing: border-box;
+    transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-input::placeholder {
+input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: #1B1B1B;
+    box-shadow: 0 0 0 2px rgba(27, 27, 27, 0.1);
+}
+
+input::placeholder, textarea::placeholder {
     color: #aaa;
+}
+
+select {
+    cursor: pointer;
+}
+
+textarea {
+    resize: vertical;
+    min-height: 60px; /* Reduced from 80px */
+}
+
+.address-row {
+    display: flex;
+    gap: 8px; /* Reduced from 12px */
+    margin-bottom: 10px; /* Reduced from 16px */
+}
+
+.address-field {
+    flex: 1;
+}
+
+.address-field-large {
+    flex: 2;
+}
+
+.address-field input,
+.address-field select,
+.address-field-large input,
+.address-field-large select {
+    margin-bottom: 0;
 }
 
 .exp-cvc {
     display: flex;
-    gap: 16px;
+    gap: 12px; /* Reduced from 16px */
 }
 
 .expiration, .security {
     flex: 1;
+}
+
+/* Butonul de submit pe toată lățimea */
+.submit-section {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: center;
+    margin-top: 16px; /* Reduced from 24px */
 }
 
 .btn {
@@ -78,22 +154,256 @@ input::placeholder {
     gap: 8px;
     background-color: #1B1B1B;
     color: white;
-    padding: 12px;
-    border-radius: 8px;
+    padding: 12px 28px; /* Reduced from 16px 32px */
+    border-radius: 6px; /* Reduced from 8px */
     cursor: pointer;
-    margin-top: 16px;
-    transition: background-color 0.2s;
+    transition: background-color 0.2s, transform 0.1s;
+    font-weight: 600;
+    font-size: 14px; /* Reduced from 16px */
+    min-width: 180px; /* Reduced from 200px */
 }
 
 .btn:hover {
     background-color: #333;
+    transform: translateY(-1px);
+}
+
+.btn:active {
+    transform: translateY(0);
 }
 
 .btn span {
-    font-weight: 500;
-    font-size: 16px;
+    font-weight: 600;
+    font-size: 14px; /* Reduced from 16px */
 }
 
 .btn svg {
     stroke: white;
+    width: 20px; /* Reduced from 24px */
+    height: 20px; /* Reduced from 24px */
+}
+
+/* Responsivitate pentru tablete */
+@media (max-width: 768px) {
+    .container {
+        padding: 20px; /* Reduced from 30px */
+    }
+    
+    .form-layout {
+        grid-template-columns: 1fr;
+        gap: 15px; /* Reduced from 20px */
+    }
+    
+    .address-row {
+        flex-direction: column;
+        gap: 6px; /* Reduced from 8px */
+    }
+    
+    .address-field input,
+    .address-field select,
+    .address-field-large input,
+    .address-field-large select {
+        margin-bottom: 10px; /* Reduced from 16px */
+    }
+    
+    .exp-cvc {
+        flex-direction: column;
+        gap: 6px; /* Reduced from 8px */
+    }
+}
+
+/* Mobile responsiveness */
+@media (max-width: 600px) {
+    .main {
+        padding: 20px 0; /* Reduced padding for mobile */
+    }
+    
+    .container {
+        padding: 16px; /* Reduced from 24px */
+        margin: 10px 0; /* Reduced margin */
+    }
+    
+    .form-layout {
+        grid-template-columns: 1fr;
+        gap: 12px; /* Reduced from 16px */
+    }
+    
+    .section {
+        margin-bottom: 16px; /* Reduced spacing */
+    }
+    
+    .address-row {
+        flex-direction: column;
+        gap: 0;
+    }
+    
+    .address-field input,
+    .address-field select,
+    .address-field-large input,
+    .address-field-large select {
+        margin-bottom: 10px; /* Reduced from 16px */
+    }
+    
+    .exp-cvc {
+        flex-direction: column;
+        gap: 0;
+    }
+    
+    .heading h1 {
+        font-size: 20px; /* Reduced from 24px */
+    }
+    
+    .section-title {
+        font-size: 14px; /* Reduced from 16px */
+    }
+    
+    .btn {
+        width: 100%;
+        min-width: unset;
+        padding: 10px 20px; /* Reduced padding */
+    }
+}
+
+/* Form validation styles */
+input:invalid:not(:placeholder-shown) {
+    border-color: #e74c3c;
+}
+
+input:valid:not(:placeholder-shown) {
+    border-color: #27ae60;
+}
+
+/* Custom validation styles */
+input.error, select.error, textarea.error {
+    border-color: #e74c3c !important;
+    background-color: #fef2f2;
+    animation: shake 0.3s ease-in-out;
+}
+
+input.valid, select.valid, textarea.valid {
+    border-color: #27ae60 !important;
+    background-color: #f0fdf4;
+}
+
+.error-message {
+    color: #e74c3c;
+    font-size: 12px;
+    margin-top: -8px;
+    margin-bottom: 8px;
+    display: none;
+    font-weight: 500;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+/* Success and error snackbar styles */
+.success-snackbar {
+    background-color: #27ae60 !important;
+    color: white !important;
+}
+
+.error-snackbar {
+    background-color: #e74c3c !important;
+    color: white !important;
+}
+
+/* Loading state for submit button */
+.btn.loading {
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+.btn.loading span::after {
+    content: "...";
+    animation: dots 1.5s steps(5, end) infinite;
+}
+
+@keyframes dots {
+    0%, 20% {
+        color: rgba(255, 255, 255, 0);
+        text-shadow: .25em 0 0 rgba(255, 255, 255, 0),
+                     .5em 0 0 rgba(255, 255, 255, 0);
+    }
+    40% {
+        color: white;
+        text-shadow: .25em 0 0 rgba(255, 255, 255, 0),
+                     .5em 0 0 rgba(255, 255, 255, 0);
+    }
+    60% {
+        text-shadow: .25em 0 0 white,
+                     .5em 0 0 rgba(255, 255, 255, 0);
+    }
+    80%, 100% {
+        text-shadow: .25em 0 0 white,
+                     .5em 0 0 white;
+    }
+}
+
+/* Replace the existing .btn styles with these */
+.btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background-color: #9c3193; /* Purple color */
+    color: white;
+    padding: 12px 28px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+    font-weight: 600;
+    font-size: 14px;
+    min-width: 180px;
+    border: none;
+}
+
+.btn:hover:not(:disabled) {
+    background-color: #7a2973; /* Darker purple */
+    transform: translateY(-1px);
+}
+
+.btn:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.btn:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+/* Update validation message color */
+.error-message {
+    color: #9c3193; /* Purple color */
+    font-size: 12px;
+    margin-top: -8px;
+    margin-bottom: 8px;
+    display: none;
+    font-weight: 500;
+}
+
+/* Update input validation styles */
+input.error, select.error, textarea.error {
+    border-color: #9c3193 !important; /* Purple color */
+    background-color: #f9f0f9; /* Light purple background */
+}
+
+input.valid, select.valid, textarea.valid {
+    border-color: #27ae60 !important;
+    background-color: #f0fdf4;
+}
+
+/* Update snackbar colors */
+.success-snackbar {
+    background-color: #27ae60 !important;
+    color: white !important;
+}
+
+.error-snackbar {
+    background-color: #9c3193 !important; /* Purple color */
+    color: white !important;
 }
