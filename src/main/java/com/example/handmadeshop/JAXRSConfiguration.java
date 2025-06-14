@@ -1,11 +1,8 @@
 package com.example.handmadeshop;
 
+import com.example.handmadeshop.controllers.*;
 import com.example.handmadeshop.security.JWTAuthFilter;
 import com.example.handmadeshop.security.RoleAuthorizationFilter;
-import com.example.handmadeshop.controllers.GoogleAuthController;
-import com.example.handmadeshop.controllers.ProductController;
-import com.example.handmadeshop.controllers.RoleController;
-import com.example.handmadeshop.controllers.UserController;
 import jakarta.ws.rs.ApplicationPath;
 import jakarta.ws.rs.core.Application;
 import java.util.Set;
@@ -16,7 +13,8 @@ public class JAXRSConfiguration extends Application {
     public Set<Class<?>> getClasses() {
         return Set.of(
                 CorsFilter.class,       
-                OptionsResource.class,   
+                OptionsResource.class,
+                ConfigController.class,
                 UserController.class,
                 ProductController.class,
                 RoleController.class,

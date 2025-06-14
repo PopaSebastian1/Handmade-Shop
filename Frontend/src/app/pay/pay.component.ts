@@ -1,9 +1,10 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { DataService } from '../data.service';
-import { Subscription } from 'rxjs';
+import { map, Subscription } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { UserService } from '../services/user-service/user.service';
+import { ConfigService } from '../services/config.service';
 
 interface PersonalInfo {
   name: string;
@@ -80,7 +81,8 @@ export class PayComponent implements OnInit, OnDestroy {
   constructor(
     private router: Router,
     private snackBar: MatSnackBar,
-    private userService: UserService
+    private userService: UserService,
+    private configService: ConfigService
   ) { }
 
   ngOnInit() {
@@ -560,7 +562,10 @@ export class PayComponent implements OnInit, OnDestroy {
     const orderData = this.collectFormData();
 
     try {
-      const response = await fetch('https://8hic370xid.execute-api.us-east-1.amazonaws.com/dev/generate-pdf', {
+      const config = await this.configService.getConfig().toPromise();
+      const lambdaKey = config!.lambdaKey;
+
+      let response = await fetch(lambdaKey, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(orderData)
@@ -570,7 +575,6 @@ export class PayComponent implements OnInit, OnDestroy {
 
       const data = await response.json();
       const pdfUrl = data.downloadUrl;
-      // Apelează processOrder înainte de a deschide PDF-ul
       const currentUser = this.userService.getCurrentUser();
       if (currentUser && currentUser.id) {
         this.userService.processOrder(currentUser.id).subscribe({
