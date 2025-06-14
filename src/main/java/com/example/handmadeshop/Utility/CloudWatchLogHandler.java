@@ -1,5 +1,6 @@
 package com.example.handmadeshop.Utility;
 
+import com.example.handmadeshop.services.SecretsManagerService;
 import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.cloudwatchlogs.CloudWatchLogsClient;
@@ -13,8 +14,8 @@ import java.util.logging.LogRecord;
 
 public class CloudWatchLogHandler extends Handler {
 
-    private static final String LOG_GROUP = "/payara/handmade-shop";
-    private static final String LOG_STREAM = "app-log-stream";
+    private static final String LOG_GROUP = SecretsManagerService.get("logGroup");
+    private static final String LOG_STREAM = SecretsManagerService.get("logStream");
 
     private final CloudWatchLogsClient logsClient;
     private final AtomicReference<String> sequenceToken = new AtomicReference<>();

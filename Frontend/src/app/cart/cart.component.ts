@@ -30,19 +30,22 @@ export class CartComponent implements OnInit {
     }
   }
 
-  loadCart() {
-    if (this.currentUserId) {
-      this.productService.getProductsForUserWithQuantities(this.currentUserId)
-        .subscribe({
-          next: (products) => {
-            this.cart = products;
-          },
-          error: (err) => {
-            console.error('Error loading cart:', err);
-          }
-        });
-    }
+ loadCart() {
+  if (this.currentUserId) {
+    this.productService.getProductsForUserWithQuantities(this.currentUserId)
+      .subscribe({
+        next: (products) => {
+          // Sortează alfabetic după nume
+          this.cart = products.sort((a, b) => 
+            (a.name || '').localeCompare(b.name || '')
+          );
+        },
+        error: (err) => {
+          console.error('Error loading cart:', err);
+        }
+      });
   }
+}
 
   navigateToPay() {
     this.router.navigate(['/pay']);
