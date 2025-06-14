@@ -186,8 +186,16 @@ export class ProductsComponent implements OnInit {
         this.showTemporarySuccess('Product added successfully!');
       },
       error: (err) => {
-        console.error('Error adding product:', err);
-        this.showTemporarySuccess('Error adding product. Please try again.');
+         if (err.status === 409) {
+        this.showTemporarySuccess('Error: This content violates moderation rules (e.g. drugs detected).');
+        console.error('Moderation error:', err);
+         }
+         else
+         {
+           console.error('Error adding product:', err);
+           this.showTemporarySuccess('Error adding product. Please try again.');
+
+         }
       }
     });
   }

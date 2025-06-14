@@ -101,9 +101,7 @@ public class GoogleAuthService {
             newUser.setSurname(googleUserInfo.getSurname());
             newUser.setClientId(googleUserInfo.getClientId());
             newUser.setPassword(java.util.UUID.randomUUID().toString());
-
             newUser.setRoles(java.util.Arrays.asList("viewer"));
-
 
             UserDTO createdUser = userService.createUser(newUser);
             if (createdUser == null) {

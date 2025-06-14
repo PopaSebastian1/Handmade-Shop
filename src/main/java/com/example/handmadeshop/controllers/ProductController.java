@@ -137,7 +137,7 @@ public class ProductController {
             byte[] imageBytes = Files.readAllBytes(tempFile);
 
             // inside addProductForSale
-            List<ModerationLabel> labels = rekognitionService.detectModerationLabels(imageBytes, 60F);
+            List<ModerationLabel> labels = rekognitionService.detectModerationLabels(imageBytes, 50F);
             if (!labels.isEmpty()) {
                 ModerationLabel topLabel = labels.stream()
                         .max((a, b) -> Float.compare(a.confidence(), b.confidence()))
@@ -191,7 +191,8 @@ public class ProductController {
 
     @GET
     @Autenticated
-    @RoleRequired("buyer")
+    @RoleRequired("viewer")
+
     public Response getAllProducts() {
         logger.info("Fetching all products");
         try {

@@ -123,11 +123,12 @@ public class UserService {
                 existingUser.setPassword(kmsEncryptionService.encrypt(userDTO.getPassword()));
             }
 
-            if (userDTO.getClientId() != null) {
+            if (userDTO.getClientId() != null && !userDTO.getClientId().isEmpty()) {
                 existingUser.setClientid(kmsEncryptionService.encrypt(userDTO.getClientId()));
             }
 
-            if (userDTO.getClientSecret() != null) {
+
+            if (userDTO.getClientSecret() != null || !userDTO.getClientId().isEmpty() ) {
                 existingUser.setClientsecret(kmsEncryptionService.encrypt(userDTO.getClientSecret()));
             }
 
