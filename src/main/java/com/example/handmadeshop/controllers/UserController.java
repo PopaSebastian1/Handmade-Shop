@@ -58,9 +58,21 @@ public class UserController {
     @Path("/{id}")
     @Autenticated
     public Response updateUser(@PathParam("id") Integer id, UserDTO userDTO) {
-        UserDTO updatedUser = userService.updateUser(id, userDTO);
-        if (updatedUser != null) {
-            return Response.ok(updatedUser).build();
+        try {
+            UserDTO updatedUser = userService.updateUser(id, userDTO);
+            if (updatedUser != null) {
+                return Response.ok(updatedUser).build();
+            }
+        }
+        catch(Exception e) {
+            if(e.getMessage().contains("Email is already in use")) {
+                return Response.status(Response.Status.CONFLICT)
+                        .entity("Email already exists!")
+                        .build();
+            }
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("Error updating user: " + e.getMessage())
+                    .build();
         }
         return Response.status(Response.Status.NOT_FOUND).build();
     }

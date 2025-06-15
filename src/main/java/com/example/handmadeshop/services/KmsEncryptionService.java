@@ -14,7 +14,7 @@ import java.util.logging.Level;
 public class KmsEncryptionService {
 
     private static final Logger LOGGER = Logger.getLogger(KmsEncryptionService.class.getName());
-    private final String keyId = SecretsManagerService.get("kmsKey");
+    private final String keyId = "arn:aws:kms:us-east-1:816130369761:alias/handmade-key";
     private final KmsClient kmsClient;
 
     public KmsEncryptionService() {

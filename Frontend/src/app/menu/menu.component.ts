@@ -46,27 +46,27 @@ export class MenuComponent implements OnInit {
     this.togglePopup();
   }
 
-togglePopup() {
-  if (!this.showPopup) {
-    this.userService.currentUserData.subscribe(user => {
-      if (user) {
-        // Creează un nou obiect User cu toate proprietățile necesare
-        this.user = new User(
-          user.name,
-          user.surname,
-          user.email,
-          [...user.roles],
-          user.password,
-          user.clientId,
-          user.clientSecret,
-          user.id
-        );
-        this.confirmPassword = user.password || '';
-      }
-    }).unsubscribe();
+  togglePopup() {
+    if (!this.showPopup) {
+      this.userService.currentUserData.subscribe(user => {
+        if (user) {
+          // Creează un nou obiect User cu toate proprietățile necesare
+          this.user = new User(
+            user.surname,
+            user.name,
+            user.email,
+            [...user.roles],
+            user.password,
+            user.clientId,
+            user.clientSecret,
+            user.id
+          );
+          this.confirmPassword = user.password || '';
+        }
+      }).unsubscribe();
+    }
+    this.showPopup = !this.showPopup;
   }
-  this.showPopup = !this.showPopup;
-}
 
   toggleRole(roleName: string): void {
     if (this.user.roles.includes(roleName)) {
@@ -97,11 +97,23 @@ togglePopup() {
           next: () => {
             this.userService.setUserData(this.user);
             this.togglePopup();
+            alert('User updated successfully!');
           },
-          error: (error) => console.error('Error updating roles:', error)
+          error: (error) => {
+            console.error('Error updating roles:', error);
+            alert('Error updating user roles. Please try again.');
+          }
         });
       },
-      error: (error) => console.error('Error updating user:', error)
+      error: (error) => {
+        console.error('Error updating user:', error);
+
+        if (error.status === 409) { // Conflict - email already in use
+          alert('This email is already in use by another account. Please use a different email.');
+        } else {
+          alert('Error updating user data. Please try again.');
+        }
+      }
     });
   }
 }

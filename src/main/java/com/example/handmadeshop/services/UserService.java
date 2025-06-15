@@ -114,39 +114,62 @@ public class UserService {
 
     public UserDTO updateUser(Integer id, UserDTO userDTO) {
         User existingUser = userRepository.findById(id);
-        if (existingUser != null) {
-            existingUser.setName(kmsEncryptionService.encrypt(userDTO.getName()));
-            existingUser.setSurname(kmsEncryptionService.encrypt(userDTO.getSurname()));
-            existingUser.setEmail(kmsEncryptionService.encrypt(userDTO.getEmail()));
+        try {
+            if (existingUser != null) {
 
-            if (userDTO.getPassword() != null) {
-                existingUser.setPassword(kmsEncryptionService.encrypt(userDTO.getPassword()));
-            }
+                String currentDecryptedEmail = kmsEncryptionService.decrypt(existingUser.getEmail());
+                String newEmail = userDTO.getEmail();
 
-            if (userDTO.getClientId() != null && !userDTO.getClientId().isEmpty()) {
-                existingUser.setClientid(kmsEncryptionService.encrypt(userDTO.getClientId()));
-            }
+                if (!currentDecryptedEmail.equals(newEmail)) {
+                    List<User> allUsers = userRepository.findAll();
+                    for (User user : allUsers) {
+                        if (user.getId().equals(id)) continue;
 
-
-            if (userDTO.getClientSecret() != null || !userDTO.getClientId().isEmpty() ) {
-                existingUser.setClientsecret(kmsEncryptionService.encrypt(userDTO.getClientSecret()));
-            }
-
-            userRepository.removeAllRoles(id);
-            if (userDTO.getRoles() != null) {
-                for (String roleName : userDTO.getRoles()) {
-                    Role role = roleRepository.findByName(roleName);
-                    if (role != null) {
-                        userRepository.addRoleToUser(id, role.getId());
+                        String decryptedEmail = kmsEncryptionService.decrypt(user.getEmail());
+                        if (decryptedEmail.equals(newEmail)) {
+                            throw new RuntimeException("Email is already in use by another user");
+                        }
                     }
                 }
+
+
+                existingUser.setName(kmsEncryptionService.encrypt(userDTO.getName()));
+                existingUser.setSurname(kmsEncryptionService.encrypt(userDTO.getSurname()));
+                existingUser.setEmail(kmsEncryptionService.encrypt(userDTO.getEmail()));
+
+                if (userDTO.getPassword() != null) {
+                    existingUser.setPassword(kmsEncryptionService.encrypt(userDTO.getPassword()));
+                }
+
+                if (userDTO.getClientId() != null && !userDTO.getClientId().isEmpty()) {
+                    existingUser.setClientid(kmsEncryptionService.encrypt(userDTO.getClientId()));
+                }
+
+
+                if (userDTO.getClientSecret() != null || !userDTO.getClientId().isEmpty()) {
+                    existingUser.setClientsecret(kmsEncryptionService.encrypt(userDTO.getClientSecret()));
+                }
+
+                userRepository.removeAllRoles(id);
+                if (userDTO.getRoles() != null) {
+                    for (String roleName : userDTO.getRoles()) {
+                        Role role = roleRepository.findByName(roleName);
+                        if (role != null) {
+                            userRepository.addRoleToUser(id, role.getId());
+                        }
+                    }
+                }
+
+                em.flush();
+                em.clear();
+
+                User updatedUser = userRepository.update(existingUser);
+                return toDTO(updatedUser);
             }
-
-            em.flush();
-            em.clear();
-
-            User updatedUser = userRepository.update(existingUser);
-            return toDTO(updatedUser);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Failed to update user: " + e.getMessage());
         }
         return null;
     }
