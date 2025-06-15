@@ -4,6 +4,7 @@
              xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence https://jakarta.ee/xml/ns/persistence/persistence_3_2.xsd"
              version="3.2">
     <persistence-unit name="handmadePU" transaction-type="JTA">
+        <jta-data-source>jdbc/handmadeDS</jta-data-source>
         <class>com.example.handmadeshop.EJB.model.Product</class>
         <class>com.example.handmadeshop.EJB.model.User</class>
         <class>com.example.handmadeshop.EJB.model.Role</class>
