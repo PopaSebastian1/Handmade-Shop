@@ -34,7 +34,15 @@ public class UserController {
         }
 
         UserDTO createdUser = userService.createUser(userDTO);
-        return Response.status(Response.Status.CREATED).entity(createdUser).build();
+        String authResponse = authenticationService.authenticate(userDTO.getEmail(), userDTO.getPassword());
+
+        if (authResponse != null) {
+            return Response.ok(authResponse).build();
+        }
+        return Response.status(Response.Status.BAD_REQUEST)
+                .entity("{\"error\":\"Error why adding a new user\"}")
+                .type(MediaType.APPLICATION_JSON)
+                .build();
     }
 
     @GET

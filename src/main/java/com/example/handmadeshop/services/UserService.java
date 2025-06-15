@@ -137,7 +137,7 @@ public class UserService {
                 existingUser.setSurname(kmsEncryptionService.encrypt(userDTO.getSurname()));
                 existingUser.setEmail(kmsEncryptionService.encrypt(userDTO.getEmail()));
 
-                if (userDTO.getPassword() != null) {
+                if (userDTO.getPassword() != null && !userDTO.getPassword().isEmpty()) {
                     existingUser.setPassword(kmsEncryptionService.encrypt(userDTO.getPassword()));
                 }
 

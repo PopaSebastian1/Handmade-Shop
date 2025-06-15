@@ -16,6 +16,7 @@ export class MenuComponent implements OnInit {
   showPopup = false;
   allRoles: Role[] = [];
   confirmPassword: string = '';
+  public isFieldDisabled: boolean = true; 
 
   constructor(
     private router: Router,
@@ -26,6 +27,12 @@ export class MenuComponent implements OnInit {
   ngOnInit() {
     this.userService.currentUserData.subscribe(user => {
       if (user) this.user = user;
+      if(user?.clientId=="" || user?.clientId==null) {
+        this.isFieldDisabled = true;
+      }
+      else{
+        this.isFieldDisabled = false;
+      }
     });
 
     this.roleService.getAllRoles().subscribe(roles => {

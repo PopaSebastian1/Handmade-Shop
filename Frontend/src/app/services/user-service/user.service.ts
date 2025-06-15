@@ -4,7 +4,7 @@ import { environment } from '../../environment';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { User } from '../../models/user.model';
 import { Router } from '@angular/router';
-import {jwtDecode} from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 import { tap } from 'rxjs/operators';
 import { JwtPayload } from '../../models/JwtPayload';
 import { JwtDecoderService } from '../jwt-decoder/jwt-decoder.service';
@@ -30,7 +30,7 @@ export class UserService {
     private jwtDecoder: JwtDecoderService
   ) {
     this.restoreSession(); // Verificăm dacă există un token salvat la inițializare
-   }
+  }
 
   decodeJwt(token: string): JwtPayload {
     try {
@@ -87,15 +87,16 @@ export class UserService {
       email: payload.sub,
       surname: payload.name,
       name: payload.surname,
-      clientId: '',
+      clientId: payload.clientId || '',
       fullName: `${payload.name} ${payload.surname}`,
       roles: payload.roles,
-      toSafeObject: function() {
+      toSafeObject: function () {
         return {
           id: this.id,
           email: this.email,
           surname: this.surname,
           name: this.name,
+          clientId: this.clientId,
           fullName: this.fullName,
           roles: this.roles
         };
@@ -156,8 +157,13 @@ export class UserService {
 
     return this.http.post(`${this.baseUrl}/users`, user, {
       headers: headers,
-      responseType: 'json'
-    });
+      responseType: 'text'
+    }).pipe(
+      tap(token => {
+        console.log('Signup response received');
+        this.processJwtToken(token);
+      })
+    );
   }
 
   updateUser(user: User): Observable<any> {

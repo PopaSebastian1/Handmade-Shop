@@ -19,7 +19,7 @@
           <h1>Edit Profile</h1>
 
           <form #editForm="ngForm" (ngSubmit)="saveChanges()">
-            <div class="form-columns">
+            <div class="form-columns" *ngIf="isFieldDisabled">
               <div class="form-column">
                 <div class="form-group">
                   <label for="username">Username</label>

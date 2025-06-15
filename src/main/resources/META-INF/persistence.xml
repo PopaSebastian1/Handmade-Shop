@@ -3,15 +3,13 @@
              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
              xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence https://jakarta.ee/xml/ns/persistence/persistence_3_2.xsd"
              version="3.2">
-    <persistence-unit name="handmadePU">
-        <jta-data-source>jdbc/PostgresPOOL</jta-data-source>
+    <persistence-unit name="handmadePU" transaction-type="JTA">
         <class>com.example.handmadeshop.EJB.model.Product</class>
         <class>com.example.handmadeshop.EJB.model.User</class>
+        <class>com.example.handmadeshop.EJB.model.Role</class>
+        <class>com.example.handmadeshop.EJB.model.UserProduct</class>
+        <class>com.example.handmadeshop.EJB.model.UserRole</class>
         <properties>
-            <property name="jakarta.persistence.jdbc.driver" value="org.postgresql.Driver"/>
-            <property name="jakarta.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/handmade_db"/>
-            <property name="jakarta.persistence.jdbc.user" value="admin"/>
-            <property name="jakarta.persistence.jdbc.password" value="31071980"/>
             <property name="hibernate.hbm2ddl.auto" value="update"/>
             <property name="hibernate.show_sql" value="true"/>
             <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>
