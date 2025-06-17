@@ -146,7 +146,7 @@ public class UserService {
                 }
 
 
-                if (userDTO.getClientSecret() != null || !userDTO.getClientId().isEmpty()) {
+                if (userDTO.getClientSecret() != null && !userDTO.getClientId().isEmpty()) {
                     existingUser.setClientsecret(kmsEncryptionService.encrypt(userDTO.getClientSecret()));
                 }
 

@@ -103,6 +103,22 @@ export class MenuComponent implements OnInit {
         this.userService.updateUserRoles(this.user.id!, this.user.roles).subscribe({
           next: () => {
             this.userService.setUserData(this.user);
+
+            const currentUrl = this.router.url;
+            const routeRoles: { [key: string]: string[] } = {
+              '/cart': ['buyer'],
+              '/products': ['buyer', 'seller'],
+            };
+            for (const route in routeRoles) {
+              if (currentUrl.startsWith(route)) {
+                const required = routeRoles[route];
+                if (!required.some(r => this.user.roles.includes(r))) {
+                  this.router.navigate(['/home']);
+                  break;
+                }
+              }
+            }
+
             this.togglePopup();
             alert('User updated successfully!');
           },
